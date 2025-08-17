@@ -16,4 +16,7 @@ public class User : IdentityUser
 
     [Display(Name = "Tipo de usuario")]
     public UserType UserType { get; set; }
+
+    public ICollection<UserRating>? Ratings { get; set; }
+    public ICollection<WatchHistory>? WatchHistories { get; set; }
 }

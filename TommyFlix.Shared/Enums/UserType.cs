@@ -2,6 +2,5 @@
 
 public enum UserType
 {
-    SuperAdmin,
-    User
+    SuperAdmin, User
 }
