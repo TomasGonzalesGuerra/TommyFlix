@@ -11,6 +11,4 @@ public class CastMember
     [Required(ErrorMessage = "El campo {0} es obligatorio.")]
     public CastType Role { get; set; }
     public string? PhotoUrl { get; set; }
-
-    public ICollection<MediaContent>? MediaContents { get; set; }
 }

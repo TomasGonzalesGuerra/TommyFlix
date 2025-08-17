@@ -1,4 +1,5 @@
-﻿using TommyFlix.Api.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using TommyFlix.Api.Helpers;
 using TommyFlix.Shared.Entities;
 using TommyFlix.Shared.Enums;
 
@@ -22,6 +23,18 @@ public class SeedDb(DataContext datacontext, IUserHelper userHelper)
         await CheckUserAsync("Sai Ambu", "miha@yopmail.com", "377 314 620", "https://tse4.mm.bing.net/th/id/OIP.ZltgcqHOJxCsj2Pf9IhKqQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3", UserType.User);
         await CheckUserAsync("Hynata Hyuga", "hyna@tommy.com", "928 172 126", "https://pt.quizur.com/_image?href=https://img.quizur.com/f/img6149da08ee4b74.87549065.jpg?lastEdited=1632229911&w=600&h=600&f=webp", UserType.User);
         await CheckUserAsync("Ino Sarutobi", "ino@tommy.com", "928 172 129", "https://th.bing.com/th/id/R.cbca06d335b58ddea8eafd6f1207f994?rik=XIcp71ShwjKQ3g&riu=http%3a%2f%2ficons.iconseeker.com%2fpng%2f128%2fnaruto-vol-2%2fyamanaka-ino.png&ehk=m2lPEUWXtlWr9W%2fne%2bmOtCfLTzCrULFN5%2bNL%2b%2fPVciI%3d&risl=&pid=ImgRaw&r=0", UserType.User);
+        await CheckRellenoAsync();
+        CastMember? director = await _datacontext.CastMembers.FirstOrDefaultAsync(c => c.FullName == "Christopher Nolan");
+        CastMember? actor = await _datacontext.CastMembers.FirstOrDefaultAsync(c => c.FullName == "Leo DiCaprio");
+        CastMember? actor2 = await _datacontext.CastMembers.FirstOrDefaultAsync(c => c.FullName == "David Harbour");
+        Gender? gender = await _datacontext.Genders.FirstOrDefaultAsync(g => g.Name == "Sci-Fi");
+        Gender? gender2 = await _datacontext.Genders.FirstOrDefaultAsync(g => g.Name == "Romance");
+        Gender? gender3 = await _datacontext.Genders.FirstOrDefaultAsync(g => g.Name == "Drama");
+        Tag? tag = await _datacontext.Tags.FirstOrDefaultAsync(t => t.Name == "Classics");
+        Tag? tag2 = await _datacontext.Tags.FirstOrDefaultAsync(t => t.Name == "Award-winning");
+        Tag? tag3 = await _datacontext.Tags.FirstOrDefaultAsync(t => t.Name == "Trending");
+        await CheckMoviesAsync(director!, actor!, gender!, gender2!, tag!, tag2!);
+        await CheckSerieAsync(actor2!, gender!, gender3!, tag3!);
     }
 
     private async Task CheckRolesAsync()
@@ -77,4 +90,126 @@ public class SeedDb(DataContext datacontext, IUserHelper userHelper)
 
         return user;
     }
+
+    private async Task CheckRellenoAsync()
+    {
+        if (_datacontext.Tags.Any()) return;
+        if (_datacontext.Genders.Any()) return;
+        if (_datacontext.CastMembers.Any()) return;
+
+        List<Tag> tags =
+        [
+            new() { Name = "Award-winning" },
+            new() { Name = "Trending" },
+            new() { Name = "Classics" },
+            new() { Name = "Kids" },
+            new() { Name = "New Release" },
+        ];
+
+        List<Gender> genders =
+        [
+            new() { Name = "Drama" },
+            new() { Name = "Acción" },
+            new() { Name = "Aventura" },
+            new() { Name = "Wester" },
+            new() { Name = "Comedia" },
+            new() { Name = "Sci-Fi" },
+            new() { Name = "Romance" },
+        ];
+
+        List<CastMember> cast =
+        [
+            new() { FullName = "Robert Downey Jr.", Role = CastType.Actor },
+            new() { FullName = "Leo DiCaprio", Role = CastType.Actor },
+            new() { FullName = "Scarlett Johansson", Role = CastType.Actor },
+            new() { FullName = "David Harbour", Role = CastType.Actor },
+            new() { FullName = "Christopher Nolan", Role = CastType.Director },
+            new() { FullName = "Vince Gilligan", Role = CastType.Director },
+        ];
+
+        _datacontext.Tags.AddRange(tags);
+        _datacontext.Genders.AddRange(genders);
+        _datacontext.CastMembers.AddRange(cast);
+        await _datacontext.SaveChangesAsync();
+    }
+
+    private async Task CheckMoviesAsync(CastMember director, CastMember actor, Gender gender, Gender gender2, Tag tag, Tag tag2)
+    {
+        if (_datacontext.Movies.Any()) return;
+
+        Movie movie1 = new()
+        {
+            Title = "Inception",
+            Description = "Un ladrón que roba secretos mediante el uso de tecnología para infiltrarse en los sueños.",
+            ReleaseDate = new DateTime(2010, 7, 16),
+            PosterUrl = "https://link/to/inception.jpg",
+            Duration = TimeSpan.FromMinutes(148),
+            Tags = [tag],
+            Cast = [director],
+            Genders = [gender],
+            Ratings = [],
+            WatchHistories = [],
+        };
+
+        Movie movie2 = new()
+        {
+            Title = "Titanic",
+            Description = "La tragedia del trasatlántico vista a través del romance de Jack y Rose.",
+            ReleaseDate = new DateTime(1997, 12, 19),
+            PosterUrl = "https://link/to/titanic.jpg",
+            Duration = TimeSpan.FromMinutes(195),
+            Tags = [tag2],
+            Cast = [actor],
+            Genders = [gender2],
+            Ratings = [],
+            WatchHistories = [],
+        };
+
+        _datacontext.Movies.AddRange(movie1, movie2);
+        await _datacontext.SaveChangesAsync();
+    }
+
+    private async Task CheckSerieAsync(CastMember actor2, Gender gender, Gender gender3, Tag tag3)
+    {
+        if (_datacontext.Series.Any()) return;
+
+        Serie serie = new()
+        {
+            Title = "Stranger Things",
+            Description = "Niños, ciencia y lo paranormal en Hawkins, Indiana.",
+            ReleaseDate = new DateTime(2016, 7, 15),
+            PosterUrl = "https://link/to/stranger_things.jpg",
+            Tags = [tag3],
+            Cast = [actor2],
+            Genders = [gender, gender3],
+            Seasons = [],
+            Ratings = [],
+            WatchHistories = [],
+        };
+
+        serie.Seasons!.Add( new()
+        {
+            SeasonNumber = 1,
+            Episodes =
+            [
+                new() { Title = "The Vanishing of Will Byers", EpisodeNumber = 1, Duration = TimeSpan.FromMinutes(47) },
+                new() { Title = "The Weirdo on Maple Street", EpisodeNumber = 2, Duration = TimeSpan.FromMinutes(55) }
+            ]
+        });
+
+        serie.Seasons.Add( new()
+        {
+            SeasonNumber = 2,
+            Episodes =
+            [
+                new() { Title = "Madmax", EpisodeNumber = 1, Duration = TimeSpan.FromMinutes(48) },
+                new() { Title = "Trick or Treat, Freak", EpisodeNumber = 2, Duration = TimeSpan.FromMinutes(56) }
+            ]
+        });
+
+        _datacontext.Series.Add(serie);
+        await _datacontext.SaveChangesAsync();
+    }
+
+
 }

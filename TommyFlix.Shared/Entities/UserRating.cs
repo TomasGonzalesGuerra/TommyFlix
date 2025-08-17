@@ -8,6 +8,8 @@ public class UserRating
 
     public User? User { get; set; }
     public string? UserId { get; set; }
-    public MediaContent? MediaContent { get; set; }
-    public int MediaContentId { get; set; }
+    public Movie? Movie { get; set; }
+    public int MovieId { get; set; }
+    public Serie? Serie { get; set; }
+    public int SerieId { get; set; }
 }
