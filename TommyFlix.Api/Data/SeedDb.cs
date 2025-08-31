@@ -177,6 +177,20 @@ public class SeedDb(DataContext datacontext, IUserHelper userHelper)
         {
             Title = "Stranger Things",
             Description = "Niños, ciencia y lo paranormal en Hawkins, Indiana.",
+            ReleaseDate = new DateTime(2116, 7, 15),
+            PosterUrl = "https://link/to/stranger_things.jpg",
+            Tags = [tag3],
+            Cast = [actor2],
+            Genders = [gender, gender3],
+            Seasons = [],
+            Ratings = [],
+            WatchHistories = [],
+        };
+
+        Serie serie2 = new()
+        {
+            Title = "Stranger Things 2",
+            Description = "Niños, ciencia y lo paranormal en Hawkins, Indiana.",
             ReleaseDate = new DateTime(2016, 7, 15),
             PosterUrl = "https://link/to/stranger_things.jpg",
             Tags = [tag3],
@@ -207,7 +221,18 @@ public class SeedDb(DataContext datacontext, IUserHelper userHelper)
             ]
         });
 
+        serie2.Seasons.Add( new()
+        {
+            SeasonNumber = 1,
+            Episodes =
+            [
+                new() { Title = "Madmax", EpisodeNumber = 1, Duration = TimeSpan.FromMinutes(48) },
+                new() { Title = "Trick or Treat, Freak", EpisodeNumber = 2, Duration = TimeSpan.FromMinutes(56) }
+            ]
+        });
+
         _datacontext.Series.Add(serie);
+        _datacontext.Series.Add(serie2);
         await _datacontext.SaveChangesAsync();
     }
 
