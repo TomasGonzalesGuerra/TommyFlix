@@ -1,0 +1,87 @@
+﻿.detail-page {
+    height: 100vh;
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 0 4%;
+}
+
+.detail-content {
+    max-width: 600px;
+    z-index: 2;
+}
+
+.detail-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.detail-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.match {
+    color: #46d369;
+    font-weight: bold;
+}
+
+.badge {
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 0 0.4rem;
+    font-size: 0.8rem;
+}
+
+.detail-description {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.detail-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.btn-main-play {
+    background-color: white;
+    color: black;
+    padding: 0.8rem 2rem;
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+    .btn-main-play:hover {
+        background-color: rgba(255,255,255,0.7);
+    }
+
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.6);
+    border: 2px solid rgba(255,255,255,0.5);
+    color: white;
+    cursor: pointer;
+}
+
+.detail-cast p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-cast span {
+    color: #777;
+}

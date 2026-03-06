@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
+
 
 <PageTitle>Home</PageTitle>
 
@@ -9,14 +11,15 @@
     <div class="movie-container" @ref="movieSlider">
         @foreach (var movie in ListaDePeliculas)
         {
-            <div class="movie-card">
+            <div class="movie-card" @onclick="() => IrAlDetalle(35)">
                 <img src="@movie.PosterUrl" alt="@movie.Titulo" class="movie-poster" />
                 <div class="movie-overlay">
                     <h5 class="movie-title">@movie.Titulo</h5>
                     <span class="movie-badge">@movie.Clasificacion</span>
                     <div class="movie-actions">
-                        <button class="btn-play">▶</button>
-                        <button class="btn-info">+</button>
+                        @* .StopPropagation evita que al dar clic al play se dispare también el clic del detalle *@
+                        <button class="btn-play" @onclick:stopPropagation="true" @onclick="() => VerPelicula(35)"> ▶ </button>
+                        <button class="btn-info" @onclick:stopPropagation="true" @onclick="() => IrAlDetalle(35)"> + </button>
                     </div>
                 </div>
             </div>
@@ -35,11 +38,7 @@
         // Llamamos a una función helper de JS para el scroll suave
         await JS.InvokeVoidAsync("sideScroll", movieSlider, direction, 25, 300);
     }
-}
 
-
-
-@code {
     // Esto es lo que soluciona el error en rojo
     private List<MovieDto> ListaDePeliculas = new();
 
@@ -129,6 +128,16 @@
                 PosterUrl = "https://www.univision.com/_next/image?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fg%2Fguilt-by-association.jpg&w=1280&q=75"
             },
         };
+    }
+
+    private void IrAlDetalle(int id)
+    {
+        Navigation.NavigateTo($"/film/{id}");
+    }
+
+    private void VerPelicula(int id)
+    {
+        Navigation.NavigateTo($"/breeder/{id}");
     }
 
     public class MovieDto

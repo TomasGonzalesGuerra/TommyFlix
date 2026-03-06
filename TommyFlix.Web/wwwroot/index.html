@@ -39,6 +39,32 @@
             });
         };
     </script>
+    <script>
+        window.toggleFullScreen = function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        };
+    </script>
+    <script>
+        window.videoHelpers = {
+            getProgressBarX: function (element) {
+                var rect = element.getBoundingClientRect();
+                return { left: rect.left, width: rect.width };
+            },
+            setVideoTime: function (video, seconds) {
+                video.currentTime = seconds;
+            },
+            getVideoData: function (video) {
+                return {
+                    currentTime: video.currentTime,
+                    duration: video.duration || 0
+                };
+            }
+        };
+    </script>
 </body>
 
 </html>

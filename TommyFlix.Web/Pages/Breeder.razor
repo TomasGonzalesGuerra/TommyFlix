@@ -1,0 +1,101 @@
+﻿@page "/breeder/{breederID:int}"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Breeder</PageTitle>
+
+<div class="video-container @(controlesVisibles ? "" : "hide-cursor")" @onmousemove="MostrarControles">
+
+    @* Usamos @ref para manipular el video desde C# *@
+    <video @ref="videoElement" class="full-video" @ontimeupdate="ActualizarProgreso" @onclick="TogglePlay">
+        <source src="video-ejemplo.mp4" type="video/mp4" />
+    </video>
+
+    <div class="video-overlay @(controlesVisibles ? "v-visible" : "v-hidden")">
+        <!-- ... Top Bar anterior ... -->
+
+        <div class="bottom-controls">
+            @* Barra interactiva *@
+            <div class="progress-container" @onclick="SeekVideo">
+                <div class="progress-bar">
+                    <div class="progress-filled" style="width: @(porcentajeProgreso)%"></div>
+                    <div class="progress-knob" style="left: @(porcentajeProgreso)%"></div>
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <button class="ctrl-btn" @onclick="TogglePlay">@(isPaused ? "▶" : "⏸")</button>
+                <div class="time-display">@tiempoActual / @tiempoTotal</div>
+                <button class="ctrl-btn">▶</button>
+                <button class="ctrl-btn">🔊</button>
+                <button class="ctrl-btn full-scr" @onclick="ToggleFullScreen">⛶</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public int breederID { get; set; }
+    private bool controlesVisibles = true;
+    private System.Threading.Timer? timerControles;
+
+    private void MostrarControles()
+    {
+        controlesVisibles = true;
+        timerControles?.Dispose();
+        // Ocultar después de 3 segundos de inactividad
+        timerControles = new System.Threading.Timer(_ =>
+        {
+            controlesVisibles = false;
+            InvokeAsync(StateHasChanged);
+        }, null, 3000, Timeout.Infinite);
+    }
+
+    private void Volver() => Navigation.NavigateTo($"/film/{breederID}");
+
+    private async Task ToggleFullScreen() => await JS.InvokeVoidAsync("toggleFullScreen");
+
+    private void TogglePlay() { /* Lógica para pausar/reproducir */ }
+}
+
+@code {
+    private ElementReference videoElement;
+    private double porcentajeProgreso = 0;
+    private string tiempoActual = "00:00";
+    private string tiempoTotal = "00:00";
+    private bool isPaused = false;
+
+    // Se ejecuta cada vez que el video avanza
+    private async Task ActualizarProgreso()
+    {
+        var data = await JS.InvokeAsync<VideoData>("videoHelpers.getVideoData", videoElement);
+        if (data.Duration > 0)
+        {
+            porcentajeProgreso = (data.CurrentTime / data.Duration) * 100;
+            tiempoActual = FormatTime(data.CurrentTime);
+            tiempoTotal = FormatTime(data.Duration);
+        }
+    }
+
+    private async Task SeekVideo(MouseEventArgs e)
+    {
+        // Obtenemos posición de la barra mediante JS
+        var rect = await JS.InvokeAsync<BarRect>("videoHelpers.getProgressBarX", videoElement);
+
+        // Calculamos el punto del clic relativo a la barra
+        double relativeX = e.ClientX - rect.Left;
+        double newPercentage = relativeX / rect.Width;
+
+        var data = await JS.InvokeAsync<VideoData>("videoHelpers.getVideoData", videoElement);
+        double newTime = newPercentage * data.Duration;
+
+        await JS.InvokeVoidAsync("videoHelpers.setVideoTime", videoElement, newTime);
+    }
+
+    private string FormatTime(double seconds) =>
+        TimeSpan.FromSeconds(seconds).ToString(@"mm\:ss");
+
+    public class VideoData { public double CurrentTime { get; set; } public double Duration { get; set; } }
+    public class BarRect { public double Left { get; set; } public double Width { get; set; } }
+}
