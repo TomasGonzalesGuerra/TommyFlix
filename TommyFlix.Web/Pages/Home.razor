@@ -1,0 +1,140 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+
+<div class="carousel-wrapper">
+    <button class="nav-btn left" @onclick="() => Scroll(-1)">&#10094;</button>
+
+    <div class="movie-container" @ref="movieSlider">
+        @foreach (var movie in ListaDePeliculas)
+        {
+            <div class="movie-card">
+                <img src="@movie.PosterUrl" alt="@movie.Titulo" class="movie-poster" />
+                <div class="movie-overlay">
+                    <h5 class="movie-title">@movie.Titulo</h5>
+                    <span class="movie-badge">@movie.Clasificacion</span>
+                    <div class="movie-actions">
+                        <button class="btn-play">▶</button>
+                        <button class="btn-info">+</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button class="nav-btn right" @onclick="() => Scroll(1)">&#10095;</button>
+</div>
+
+@code {
+    private ElementReference movieSlider;
+    [Inject] private IJSRuntime JS { get; set; }
+
+    private async Task Scroll(int direction)
+    {
+        // Llamamos a una función helper de JS para el scroll suave
+        await JS.InvokeVoidAsync("sideScroll", movieSlider, direction, 25, 300);
+    }
+}
+
+
+
+@code {
+    // Esto es lo que soluciona el error en rojo
+    private List<MovieDto> ListaDePeliculas = new();
+
+    protected override void OnInitialized()
+    {
+        // Llenamos con datos de prueba (Mock Data)
+        ListaDePeliculas = new List<MovieDto>
+        {
+            new MovieDto {
+                Titulo = "Inception",
+                Clasificacion = "13+",
+                PosterUrl = "https://m.media-amazon.com/images/I/71fOle+EP9L._AC_UF894,1000_QL80_.jpg"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://m.media-amazon.com/images/I/61yCq8lzZIL._AC_UF894,1000_QL80_.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.univision.com/_next/image?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fg%2Fguilt-by-association.jpg&w=1280&q=75"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://purodiseno.lat/wp-content/uploads/2021/05/AFICHES-CINE-10-717x1024.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://m.media-amazon.com/images/I/71fOle+EP9L._AC_UF894,1000_QL80_.jpg"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://i.pinimg.com/736x/0e/88/8e/0e888e0b1e6bc78cb93badd7040dc352.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.todocuadros.es/cdn/shop/files/poster-matrix.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.univision.com/_next/image?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fg%2Fguilt-by-association.jpg&w=1280&q=75"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://purodiseno.lat/wp-content/uploads/2021/05/AFICHES-CINE-10-717x1024.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://m.media-amazon.com/images/I/71fOle+EP9L._AC_UF894,1000_QL80_.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.univision.com/_next/image?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fg%2Fguilt-by-association.jpg&w=1280&q=75"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://purodiseno.lat/wp-content/uploads/2021/05/AFICHES-CINE-10-717x1024.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://m.media-amazon.com/images/I/71fOle+EP9L._AC_UF894,1000_QL80_.jpg"
+            },
+            new MovieDto {
+                Titulo = "The Dark Knight",
+                Clasificacion = "16+",
+                PosterUrl = "https://i.pinimg.com/736x/0e/88/8e/0e888e0b1e6bc78cb93badd7040dc352.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.todocuadros.es/cdn/shop/files/poster-matrix.jpg"
+            },
+            new MovieDto {
+                Titulo = "Interstellar",
+                Clasificacion = "Todo Público",
+                PosterUrl = "https://www.univision.com/_next/image?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fg%2Fguilt-by-association.jpg&w=1280&q=75"
+            },
+        };
+    }
+
+    public class MovieDto
+    {
+        public string Titulo { get; set; }
+        public string PosterUrl { get; set; }
+        public string Clasificacion { get; set; } // Ej: "16+" o "Todo público"
+    }
+}
