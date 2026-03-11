@@ -1,11 +1,105 @@
 ﻿@page "/"
 @inject NavigationManager Navigation
+@inject IJSRuntime JSS
 
 
 <PageTitle>Home</PageTitle>
 
 
-<div class="carousel-wrapper">
+<Header/>
+
+<div class="posters-container">
+    <button class="nav-btn left" @onclick="() => Scrolll(-400)">&#10094;</button>
+
+    <div class="posters-wrapper" @ref="postersRef">
+        @foreach (var item in ListaDePeliculas)
+        {
+            <div class="poster-card">
+                <img src="@item.PosterUrl" alt="@item.Titulo" class="movie-poster" />
+            </div>
+        }
+    </div>
+
+    <button class="nav-btn right" @onclick="() => Scrolll(400)">&#10095;</button>
+</div>
+
+@code {
+    private ElementReference postersRef;
+
+    private async Task Scrolll(int distance)
+    {
+        // Usamos JS simple para un scroll fluido manual
+        await JSS.InvokeVoidAsync("eval", $"document.querySelector('.posters-wrapper').scrollBy({{ left: {distance}, behavior: 'smooth' }})");
+    }
+}
+
+<style>
+    .posters-container {
+        position: relative;
+        padding: 0 40px;
+    }
+
+    .posters-wrapper {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 10px;
+    }
+
+        /* Esconder barra de scroll */
+        .posters-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+    .poster-card {
+        flex: 0 0 140px; /* Medida móvil similar a Netflix */
+        scroll-snap-align: start;
+    }
+
+        .poster-card img {
+            width: 100%;
+            aspect-ratio: 2 / 3; /* Proporción de póster vertical */
+            border-radius: 4px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+            .poster-card img:hover {
+                transform: scale(1.05);
+            }
+
+    /* Botones laterales */
+    .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        padding: 15px;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .left {
+        left: 0;
+    }
+
+    .right {
+        right: 0;
+    }
+
+    /* Desktop */
+    @@media (min-width: 768px) {
+        .poster-card {
+            flex: 0 0 200px;
+        }    /* Más grandes en PC */
+    }
+</style>
+
+@* <div class="carousel-wrapper">
     <button class="nav-btn left" @onclick="() => Scroll(-1)">&#10094;</button>
 
     <div class="movie-container" @ref="movieSlider">
@@ -17,7 +111,6 @@
                     <h5 class="movie-title">@movie.Titulo</h5>
                     <span class="movie-badge">@movie.Clasificacion</span>
                     <div class="movie-actions">
-                        @* .StopPropagation evita que al dar clic al play se dispare también el clic del detalle *@
                         <button class="btn-play" @onclick:stopPropagation="true" @onclick="() => VerPelicula(35)"> ▶ </button>
                         <button class="btn-info" @onclick:stopPropagation="true" @onclick="() => IrAlDetalle(35)"> + </button>
                     </div>
@@ -27,7 +120,7 @@
     </div>
 
     <button class="nav-btn right" @onclick="() => Scroll(1)">&#10095;</button>
-</div>
+</div> *@
 
 @code {
     private ElementReference movieSlider;
@@ -36,7 +129,7 @@
     private async Task Scroll(int direction)
     {
         // Llamamos a una función helper de JS para el scroll suave
-        await JS.InvokeVoidAsync("sideScroll", movieSlider, direction, 25, 300);
+        // await JS.InvokeVoidAsync("sideScroll", movieSlider, direction, 25, 300);
     }
 
     // Esto es lo que soluciona el error en rojo

@@ -1,0 +1,63 @@
+2. Lógica en el componente (NavMenu.razor)
+En tu componente de navegación, usaremos IJSRuntime para activar el listener y una variable para controlar la clase CS
+
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<nav class="navbar @navClass">
+    <!-- Tu contenido del nav aquí -->
+</nav>
+
+@code {
+    private string navClass = "nav-transparent";
+    private DotNetObjectReference<NavMenu>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("registerScrollListener", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public void OnWindowScroll(double scrollY)
+    {
+        // Si el usuario bajó más de 50px, cambiamos la clase
+        var newClass = scrollY > 50 ? "nav-colored" : "nav-transparent";
+        
+        if (newClass != navClass)
+        {
+            navClass = newClass;
+            StateHasChanged(); // Forzamos el redibujado
+        }
+    }
+
+    public void Dispose() => objRef?.Dispose();
+}
+
+
+3. Estilos CSS (NavMenu.razor.css)
+Define cómo se ve el menú en ambos estados.
+
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    z-index: 1000;
+}
+
+/* Estado inicial: Transparente */
+.nav-transparent {
+    background-color: transparent;
+    color: white;
+}
+
+/* Estado al hacer scroll: Color de la web */
+.nav-colored {
+    background-color: #1a1a1a; /* Cambia esto al color de tu web */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: white;
+}
