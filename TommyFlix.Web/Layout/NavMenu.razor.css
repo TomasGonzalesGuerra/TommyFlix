@@ -1,15 +1,16 @@
 ﻿/* --- Estilos Base (Móvil) --- */
 .navbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: #333;
+    background-color: rgba(255, 106, 0, 0.75);
     color: white;
-    position: sticky;
-    top: 0;
     z-index: 1000;
-    width: 100%;
     transition: background 0.3s ease;
 
     /* Configuración del Scroll Timeline */

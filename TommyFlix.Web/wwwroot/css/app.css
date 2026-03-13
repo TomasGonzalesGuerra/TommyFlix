@@ -87,10 +87,18 @@ code {
     text-align: start;
 }
 
+
+body{
+    margin: 0;
+    overflow-x: hidden;
+}
+
 #app {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 100vw;
     width: 100%;
 }
 
