@@ -18,7 +18,7 @@
 
 @code {
     private List<MovieDto> ListaDePeliculas = new();
-    private string apiKey = "TU_API_KEY_AQUI"; // O usa el Token de acceso
+    private string apiKey = "c227b1a20bb851365272581db22b41fe"; // O usa el Token de acceso
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,6 +30,7 @@
             if (response?.Results != null)
             {
                 ListaDePeliculas = response.Results;
+                Console.WriteLine($"yA TA: {ListaDePeliculas.Count()}");
             }
         }
         catch (Exception ex)
