@@ -37,6 +37,8 @@ builder.Services.AddCors(options =>
           .SetIsOriginAllowed(origin => true)
               .AllowCredentials();
     });
+
+    options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -52,6 +54,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddScoped<IFileStorage, FileStorage>();
+
+
+
 
 var app = builder.Build();
 
