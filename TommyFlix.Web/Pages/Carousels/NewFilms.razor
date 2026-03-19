@@ -1,12 +1,13 @@
-﻿@inject NavigationManager Navigation
+﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
 
 <div class="posters-container">
-    <button class="nav-btn left" @onclick="() => Scrolll(-400)">&#10094;</button>
+    <button class="nav-btn left" @onclick="() => Scrolll(-40)">&#10094;</button>
 
     <div class="posters-wrapper" @ref="postersRef">
         @foreach (var movie in ListaDePeliculas)
         {
-            <div class="movie-card" @onclick="() => IrAlDetalle(35)">
+            <div class="movie-card" style="transform: translateX(-@(currentStep * 100)%)" @onclick="() => IrAlDetalle(35)">
                 <img src="@movie.PosterUrl" alt="@movie.Titulo" class="movie-poster" />
                 <div class="movie-overlay">
                     <h5 class="movie-title">@movie.Titulo</h5>
@@ -20,17 +21,19 @@
         }
     </div>
 
-    <button class="nav-btn right" @onclick="() => Scrolll(400)">&#10095;</button>
+    <button class="nav-btn right" @onclick="() => Scrolll(40)">&#10095;</button>
 </div>
 
 
 @code {
+    private int currentStep = 0;
     private ElementReference postersRef;
 
     private async Task Scrolll(int direction)
     {
-        
+        await JSRuntime.InvokeVoidAsync("eval", $"document.querySelector('.posters-wrapper').scrollBy({{left: {direction}, behavior: 'smooth'}})");
     }
+
 
     private List<MovieDto> ListaDePeliculas = new();
 
@@ -121,15 +124,9 @@
         };
     }
 
-    private void IrAlDetalle(int id)
-    {
-        Navigation.NavigateTo($"/film/{id}");
-    }
+    private void IrAlDetalle(int id) => Navigation.NavigateTo($"/film/{id}");
 
-    private void VerPelicula(int id)
-    {
-        Navigation.NavigateTo($"/breeder/{id}");
-    }
+    private void VerPelicula(int id) => Navigation.NavigateTo($"/breeder/{id}");
 
     public class MovieDto
     {
