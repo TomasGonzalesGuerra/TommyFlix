@@ -103,6 +103,7 @@ body {
     background: radial-gradient(circle at top, #1B3A6B 0%, #0A0A0A 60%);
     color: #EAEAEA;
     overflow-x: hidden;
+    font-size: clamp(14px, 1vw, 18px);
 }
 
 /*Azul oscuro: #0B1E3C (fondo principal)
@@ -119,17 +120,19 @@ Texto: #EAEAEA*/
 }
 
 /* 🔝 Topbar  */
-.topbar {                   
+.topbar {
     position: sticky;
     top: 0;
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 30px;
     background: rgba(11,30,60,0.6);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(201,162,74,0.15);
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px clamp(15px, 4vw, 40px);
 }
 
 /* Logo estilo Ravenclaw */
@@ -141,14 +144,21 @@ Texto: #EAEAEA*/
     text-shadow: 0 0 10px rgba(201,162,74,0.5);
 }
 
-/* Menú */
-.menu a {
-    margin: 0 15px;
-    text-decoration: none;
-    color: #EAEAEA;
-    font-size: 0.95rem;
-    transition: color 0.2s;
+
+/* Menú adaptable */
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
+
+    .menu a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: #EAEAEA;
+        transition: color 0.2s;
+        font-size: clamp(0.8rem, 1vw, 1rem);
+    }
 
     .menu a:hover {
         color: #C9A24A;
@@ -161,7 +171,7 @@ Texto: #EAEAEA*/
 
 /* Contenido */
 .content {
-    padding: 20px 0px;
+    padding: clamp(10px, 3vw, 40px);
 }
 
 
@@ -232,25 +242,29 @@ button:hover {
 
 .carousel-viewport {
     overflow: hidden;
-    width: 100%;
+    width: 100%;    
+    scroll-snap-type: x mandatory;
 }
 
 .carousel-track {
     display: flex;
-    gap: 16px;
+    gap: clamp(6px, 1vw, 12px);
     transition: transform 0.4s ease;
     padding: 20px;
 }
 
 /* 🎬 Cards */
 .movie-card {
+    flex: 0 0 auto;
+    width: clamp(100px, 15vw, 180px);
+    height: clamp(150px, 25vw, 260px);
     min-width: 160px;
-    height: 240px;
     border-radius: 10px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
     transition: transform 0.3s ease;
+    scroll-snap-align: start;
 }
 
     .movie-card img {
@@ -307,6 +321,10 @@ button:hover {
     .movie-card {
         min-width: 120px;
         height: 180px;
+    }
+
+    .nav {
+        display: none;
     }
 }
 
@@ -507,3 +525,11 @@ button:hover {
         height: 140px;
     }
 }*/
+
+.section-title {
+    margin: 40px 0 15px 15px;
+    color: #C9A24A;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    border-left: 4px solid #C9A24A;
+    padding-left: 10px;
+}

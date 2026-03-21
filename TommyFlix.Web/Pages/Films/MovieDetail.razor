@@ -1,0 +1,36 @@
+﻿@page "/movie/{Id:int}"
+@inject TmdbService TmdbService
+
+@if (movie == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <div class="movie-detail" style="@($"background-image:url('https://image.tmdb.org/t/p/original{movie.Backdrop_Path}')")">
+
+        <div class="detail-overlay">
+            <h1>@movie.Title</h1>
+
+            <p class="rating">⭐ @movie.Vote_Average</p>
+
+            <p class="overview">@movie.Overview</p>
+
+            <div class="buttons">
+                <button class="btn play">▶ Reproducir</button>
+                <button class="btn info">+ Mi Lista</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Movie movie;
+
+    protected override async Task OnInitializedAsync()
+    {
+        movie = await TmdbService.GetMovieDetails(Id);
+    }
+}

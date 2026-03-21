@@ -1,6 +1,7 @@
 ﻿@inject TmdbService TmdbService
+@inject NavigationManager Nav
 
-                                                                    <h3>Películas de Acción Populares</h3>  
+<MovieDetailModal Movie="selectedMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
 
 <div class="carousel-wrapper">
     <button class="nav left" @onclick="Prev">❮</button>
@@ -15,7 +16,8 @@
             {
                 @foreach (var movie in movies)
                 {
-                    <div class="movie-card">
+                    @* <div class="movie-card" @onclick="() => OpenModal(movie.Id)"> *@
+                    <div class="movie-card" @onclick="() => GoToMovie(movie.Id)">
                         <img src="@($"https://image.tmdb.org/t/p/w500{movie.Poster_Path}")" />
 
                         <div class="overlay">
@@ -55,5 +57,28 @@
     {
         if (currentIndex > 0)
             currentIndex--;
+    }
+
+    private void GoToMovie(int id)
+    {
+        Nav.NavigateTo($"/movie/{id}");
+    }
+}
+
+@code {
+    private Movie selectedMovie;
+    private bool isModalVisible = false;
+
+    private async Task OpenModal(int id)
+    {
+        selectedMovie = await TmdbService.GetMovieDetails(id);
+        isModalVisible = true;
+    }
+
+    private Task CloseModal()
+    {
+        isModalVisible = false;
+        selectedMovie = null;
+        return Task.CompletedTask;
     }
 }

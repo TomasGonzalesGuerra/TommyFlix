@@ -1,0 +1,90 @@
+﻿@typeparam TItem
+
+@inject TmdbService TmdbService
+
+<MovieDetailModal Movie="@selectedItemAsMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
+
+<div class="carousel-viewport">
+    <div class="carousel-track">
+        @if (items == null)
+        {
+            <p>Cargando...</p>
+        }
+        else
+        {
+            @foreach (var item in items)
+            {
+                <div class="movie-card" @onclick="() => OpenModal(item)">
+                    <img src="@GetPosterUrl(item)" />
+                    <div class="overlay">
+                        <h4>@GetTitle(item)</h4>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public Func<Task<TmdbResponse<TItem>>> LoadItems { get; set; }
+
+    private List<TItem> items;
+    private TItem selectedItem;
+    private Movie selectedItemAsMovie;
+    private bool isModalVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (LoadItems != null)
+        {
+            var response = await LoadItems.Invoke();
+            items = response.Results;
+        }
+    }
+
+    private async Task OpenModal(TItem item)
+    {
+        selectedItem = item;
+
+        // Convertir a Movie para reutilizar el modal
+        selectedItemAsMovie = item switch
+        {
+            Movie m => m,
+            TvSeries s => new Movie
+            {
+                Id = s.Id,
+                Title = s.Name,
+                Overview = s.Overview,
+                Poster_Path = s.Poster_Path,
+                Backdrop_Path = s.Backdrop_Path,
+                Vote_Average = s.Vote_Average
+            },
+            _ => null
+        };
+
+        isModalVisible = true;
+    }
+
+    private Task CloseModal()
+    {
+        isModalVisible = false;
+        selectedItem = default;
+        selectedItemAsMovie = null;
+        return Task.CompletedTask;
+    }
+
+    // Helpers para mostrar info
+    private string GetPosterUrl(TItem item) => item switch
+    {
+        Movie m => $"https://image.tmdb.org/t/p/w500{m.Poster_Path}",
+        TvSeries s => $"https://image.tmdb.org/t/p/w500{s.Poster_Path}",
+        _ => ""
+    };
+
+    private string GetTitle(TItem item) => item switch
+    {
+        Movie m => m.Title,
+        TvSeries s => s.Name,
+        _ => ""
+    };
+}

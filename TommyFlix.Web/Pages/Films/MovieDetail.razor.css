@@ -1,0 +1,61 @@
+﻿.movie-detail {
+    position: relative;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+    /* overlay cinematográfico */
+    .movie-detail::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( to right, rgba(10,10,10,0.95) 30%, rgba(10,10,10,0.6) 60%, transparent 100% );
+    }
+
+/* contenido */
+.detail-overlay {
+    position: relative;
+    z-index: 2;
+    padding: clamp(20px, 5vw, 80px);
+    max-width: 600px;
+}
+
+    /* título */
+    .detail-overlay h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: #C9A24A;
+        text-shadow: 0 0 20px rgba(201,162,74,0.6);
+    }
+
+/* rating */
+.rating {
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+/* descripción */
+.overview {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+/* botones */
+.buttons {
+    margin-top: 20px;
+}
+
+.btn.play {
+    background: #C9A24A;
+    color: black;
+}
+
+.btn.info {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}

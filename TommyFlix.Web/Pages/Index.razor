@@ -1,13 +1,17 @@
 ﻿@page "/"
+@inject TmdbService TmdbService
 
-<Hero Title="Explora el conocimiento" 
+<Hero Title="Explora el conocimiento"
       Description="Películas y series para mentes brillantes." />
 
-<h2 class="section-title">Populares</h2>
-<MovieCarousel />
+<h2 class="section-title">Películas Populares</h2>
+<GenericCarousel TItem="Movie" LoadItems="@TmdbService.GetPopularMovies" />
 
-<h2 class="section-title">Acción</h2>
-<MovieCarousel />
+<h2 class="section-title">Películas de Acción</h2>
+<GenericCarousel TItem="Movie" LoadItems="@TmdbService.GetPopularActionMovies" />
 
-<h2 class="section-title">Recomendadas</h2>
-<MovieCarousel />
+<h2 class="section-title">Series Populares</h2>
+<GenericCarousel TItem="TvSeries" LoadItems="@TmdbService.GetPopularSeries" />
+@* 
+<h2 class="section-title">Series en Emisión</h2>
+<GenericCarousel TItem="TvSeries" LoadItems="@TmdbService.GetOnTheAirSeries" /> *@
