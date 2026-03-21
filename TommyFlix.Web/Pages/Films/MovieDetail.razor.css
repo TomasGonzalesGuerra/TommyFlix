@@ -24,7 +24,7 @@
     /* título */
     .detail-overlay h1 {
         font-size: clamp(2rem, 5vw, 3.5rem);
-        color: #C9A24A;
+        color: var(--ColoGold);
         text-shadow: 0 0 20px rgba(201,162,74,0.6);
     }
 
@@ -47,7 +47,7 @@
 }
 
 .btn.play {
-    background: #C9A24A;
+    background: var(--ColoGold);
     color: black;
 }
 

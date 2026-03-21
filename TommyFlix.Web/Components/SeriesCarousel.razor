@@ -2,52 +2,78 @@
 
 <MovieDetailModal Movie="@selectedSerieAsMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
 
-<div class="carousel-viewport">
-    <div class="carousel-track">
-        @if (series == null)
-        {
-            <p>Cargando series...</p>
-        }
-        else
-        {
-            @foreach (var serie in series)
-            {
-                <div class="movie-card" @onclick="() => OpenModal(serie.Id)">
-                    <img src="@($"https://image.tmdb.org/t/p/w500{serie.Poster_Path}")" />
-                    <div class="overlay">
-                        <h4>@serie.Name</h4>
-                    </div>
-                </div>
+<div class="carousel-wrapper">
+    <button class="nav left" @onclick="Prev">❮</button>
+
+    <div class="carousel-viewport">
+        <div class="carousel-track" style="transform: translateX(-@(currentIndex* itemWidth)px)">
+            @if (series == null)
+            {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                <p>Cargando...</p>
             }
-        }
+            else
+            {
+                @foreach (var item in series)
+                {
+                    <div class="movie-card" @onclick="() => OpenModal(item.Id)">
+                        <img src="@($"https://image.tmdb.org/t/p/w500{item.Poster_Path}")" />
+
+                        <div class="overlay">
+                            <h4>@item.Name</h4>
+                            <p>⭐ @item.Vote_Average</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
     </div>
+
+    <button class="nav right" @onclick="Next">❯</button>
 </div>
 
 @code {
-    private List<TvSeries> series;
-    private TvSeries selectedSerie;
-    private Movie selectedSerieAsMovie; // Reutiliza el modal de película
-    private bool isModalVisible = false;
+    private List<TvSeries> series =[];
 
     protected override async Task OnInitializedAsync()
     {
         var response = await TmdbService.GetPopularSeries();
         series = response.Results;
     }
+}
+
+@code {
+    private int currentIndex = 0;
+    private int itemWidth = 200; // ancho + gap aprox
+
+    private void Next()
+    {
+        if (series == null) return;
+        if (currentIndex < series.Count - 5) currentIndex++;
+    }
+
+    private void Prev()
+    {
+        if (currentIndex > 0) currentIndex--;
+    }
+}
+
+@code {
+    private TvSeries selectedSerie = new();
+    private Movie selectedSerieAsMovie = new();
+    private bool isModalVisible = false;
 
     private async Task OpenModal(int id)
     {
         selectedSerie = await TmdbService.GetSerieDetails(id);
 
-        // Convertir a Movie para reutilizar el modal
-        selectedSerieAsMovie = new Movie
+        selectedSerieAsMovie = new()
         {
-            Id = selectedSerie.Id,
             Title = selectedSerie.Name,
             Overview = selectedSerie.Overview,
+            Release_Date = selectedSerie.Release_Date,
+            Vote_Average = selectedSerie.Vote_Average,
             Poster_Path = selectedSerie.Poster_Path,
             Backdrop_Path = selectedSerie.Backdrop_Path,
-            Vote_Average = selectedSerie.Vote_Average
         };
 
         isModalVisible = true;
@@ -56,8 +82,8 @@
     private Task CloseModal()
     {
         isModalVisible = false;
-        selectedSerie = null;
-        selectedSerieAsMovie = null;
+        selectedSerie = null!;
+        selectedSerieAsMovie = null!;
         return Task.CompletedTask;
     }
 }

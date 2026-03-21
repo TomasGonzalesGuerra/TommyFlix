@@ -37,7 +37,7 @@
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    background: #0B1E3C;
+    background: var(--ColoBlueMain);
 }
 
     .modal-content .backdrop {
@@ -48,11 +48,11 @@
 
 .detail-overlay {
     padding: 20px;
-    color: #EAEAEA;
+    color: var(--ColoWhiteSoft);
 }
 
     .detail-overlay h1 {
-        color: #C9A24A;
+        color: var(--ColoGold);
         text-shadow: 0 0 10px rgba(201,162,74,0.6);
     }
 
@@ -70,7 +70,7 @@
     }
 
 .btn.play {
-    background: #C9A24A;
+    background: var(--ColoGold);
     color: black;
 }
 
@@ -85,7 +85,7 @@
     right: 10px;
     border: none;
     background: rgba(0,0,0,0.5);
-    color: #EAEAEA;
+    color: var(--ColoWhiteSoft);
     font-size: 1.2rem;
     cursor: pointer;
     border-radius: 5px;

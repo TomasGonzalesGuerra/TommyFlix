@@ -1,0 +1,55 @@
+﻿.hero {
+    position: relative;
+    height: clamp(300px, 60vh, 700px);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: clamp(15px, 4vw, 40px);
+    background: linear-gradient(to top, rgba(10,10,10,0.95), transparent);
+}
+
+.hero h1 {
+    color: var(--ColoGold);
+    font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+.hero p {
+    max-width: 500px;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+}
+
+.hero-buttons {
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.play {
+    background: var(--ColoGold);
+    color: black;
+}
+
+.info {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+/* Glow Ravenclaw */
+.hero-overlay h1 {
+    color: var(--ColoGold);
+    text-shadow: 0 0 20px rgba(201,162,74,0.6);
+}

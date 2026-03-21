@@ -1,7 +1,6 @@
 ﻿@inject TmdbService TmdbService
-@inject NavigationManager Nav
 
-<MovieDetailModal Movie="selectedMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
+<MovieDetailModal Movie="@selectedMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
 
 <div class="carousel-wrapper">
     <button class="nav left" @onclick="Prev">❮</button>
@@ -14,15 +13,14 @@
             }
             else
             {
-                @foreach (var movie in movies)
+                @foreach (var item in movies)
                 {
-                    @* <div class="movie-card" @onclick="() => OpenModal(movie.Id)"> *@
-                    <div class="movie-card" @onclick="() => GoToMovie(movie.Id)">
-                        <img src="@($"https://image.tmdb.org/t/p/w500{movie.Poster_Path}")" />
+                    <div class="movie-card" @onclick="() => OpenModal(item.Id)">
+                        <img src="@($"https://image.tmdb.org/t/p/w500{item.Poster_Path}")" />
 
                         <div class="overlay">
-                            <h4>@movie.Title</h4>
-                            <p>⭐ @movie.Vote_Average</p>
+                            <h4>@item.Title</h4>
+                            <p>⭐ @item.Vote_Average</p>
                         </div>
                     </div>
                 }
@@ -34,39 +32,33 @@
 </div>
 
 @code {
-    private List<Movie> movies;
-    private int currentIndex = 0;
-
-    private int itemWidth = 200; // ancho + gap aprox
+    private List<Movie> movies =[];
 
     protected override async Task OnInitializedAsync()
     {
         var response = await TmdbService.GetPopularActionMovies();
         movies = response.Results;
     }
+}
+
+@code {
+    private int currentIndex = 0;
+    private int itemWidth = 200; // ancho + gap aprox
 
     private void Next()
     {
         if (movies == null) return;
-
-        if (currentIndex < movies.Count - 5)
-            currentIndex++;
+        if (currentIndex < movies.Count - 5) currentIndex++;
     }
 
     private void Prev()
     {
-        if (currentIndex > 0)
-            currentIndex--;
-    }
-
-    private void GoToMovie(int id)
-    {
-        Nav.NavigateTo($"/movie/{id}");
+        if (currentIndex > 0) currentIndex--;
     }
 }
 
 @code {
-    private Movie selectedMovie;
+    private Movie selectedMovie = new();
     private bool isModalVisible = false;
 
     private async Task OpenModal(int id)

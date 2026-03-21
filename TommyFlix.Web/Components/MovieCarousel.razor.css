@@ -1,0 +1,166 @@
+﻿.carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    width: 100%;
+    scroll-snap-type: x mandatory;
+}
+
+.carousel-track {
+    display: flex;
+    gap: clamp(6px, 1vw, 12px);
+    transition: transform 0.4s ease;
+    padding: 20px;
+}
+
+/* 🎬 Cards */
+.movie-card {
+    flex: 0 0 auto;
+    width: clamp(100px, 15vw, 180px);
+    height: clamp(150px, 25vw, 260px);
+    min-width: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    scroll-snap-align: start;
+}
+
+    .movie-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Hover Netflix */
+    .movie-card:hover {
+        transform: scale(1.15);
+        z-index: 5;
+    }
+
+/* Overlay */
+.overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.movie-card:hover .overlay {
+    opacity: 1;
+}
+
+/* Botones */
+.nav {
+    position: absolute;
+    z-index: 10;
+    height: 100%;
+    width: 50px;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+    .movie-card {
+        min-width: 120px;
+        height: 180px;
+    }
+
+    .nav {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .movie-card {
+        min-width: 100px;
+        height: 150px;
+    }
+}
+
+.nav {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.carousel-wrapper:hover .nav {
+    opacity: 1;
+}
+
+.carousel-track:hover .movie-card {
+    opacity: 0.6;
+}
+
+.carousel-track .movie-card:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.movie-card {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+    .movie-card:hover {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    }
+
+.overlay h4 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.carousel-wrapper:hover .movie-card {
+    opacity: 0.5;
+}
+
+.carousel-wrapper .movie-card:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.carousel-viewport {
+    position: relative;
+}
+
+    .carousel-viewport::before,
+    .carousel-viewport::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 60px;
+        height: 100%;
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    .carousel-viewport::before {
+        left: 0;
+        background: linear-gradient(to right, var(--ColoBlackSoft), transparent);
+    }
+
+    .carousel-viewport::after {
+        right: 0;
+        background: linear-gradient(to left, var(--ColoBlackSoft), transparent);
+    }
