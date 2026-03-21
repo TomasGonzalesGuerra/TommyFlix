@@ -1,0 +1,59 @@
+﻿@inject TmdbService TmdbService
+
+                                                                    <h3>Películas de Acción Populares</h3>  
+
+<div class="carousel-wrapper">
+    <button class="nav left" @onclick="Prev">❮</button>
+
+    <div class="carousel-viewport">
+        <div class="carousel-track" style="transform: translateX(-@(currentIndex* itemWidth)px)">
+            @if (movies == null)
+            {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                <p>Cargando...</p>
+            }
+            else
+            {
+                @foreach (var movie in movies)
+                {
+                    <div class="movie-card">
+                        <img src="@($"https://image.tmdb.org/t/p/w500{movie.Poster_Path}")" />
+
+                        <div class="overlay">
+                            <h4>@movie.Title</h4>
+                            <p>⭐ @movie.Vote_Average</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <button class="nav right" @onclick="Next">❯</button>
+</div>
+
+@code {
+    private List<Movie> movies;
+    private int currentIndex = 0;
+
+    private int itemWidth = 200; // ancho + gap aprox
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TmdbService.GetPopularActionMovies();
+        movies = response.Results;
+    }
+
+    private void Next()
+    {
+        if (movies == null) return;
+
+        if (currentIndex < movies.Count - 5)
+            currentIndex++;
+    }
+
+    private void Prev()
+    {
+        if (currentIndex > 0)
+            currentIndex--;
+    }
+}
