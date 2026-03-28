@@ -1,0 +1,182 @@
+﻿@page "/perfil"
+@inject UserService UserService
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@using Microsoft.AspNetCore.Authorization
+@using TommyFlix.Shared.Entities
+@attribute [Authorize]
+
+<div class="profile-page">
+
+    <div class="profile-header">
+        <div class="profile-avatar-big">
+            @if (!string.IsNullOrEmpty(currentUser?.Photo))
+            {
+                <img src="@currentUser.Photo" alt="avatar" class="avatar-big-img" />
+            }
+            else
+            {
+                <span class="avatar-big-placeholder">👤</span>
+            }
+        </div>
+        <div>
+            <h1 class="profile-username">@currentUser?.FullName</h1>
+            <p class="profile-email">@currentUser?.Email</p>
+        </div>
+    </div>
+
+    @* Tabs *@
+    <div class="profile-tabs">
+        <button class="tab-btn @(activeTab == "info" ? "active" : "")" @onclick='() => activeTab = "info"'>
+            👤 Mis datos
+        </button>
+        <button class="tab-btn @(activeTab == "password" ? "active" : "")" @onclick='() => activeTab = "password"'>
+            🔒 Contraseña
+        </button>
+        <button class="tab-btn @(activeTab == "history" ? "active" : "")" @onclick='() => activeTab = "history"'>
+            🎬 Historial
+        </button>
+        <button class="tab-btn @(activeTab == "favorites" ? "active" : "")" @onclick='() => activeTab = "favorites"'>
+            ❤️ Favoritos
+        </button>
+    </div>
+
+    <div class="profile-content">
+
+        @* Tab: Mis datos *@
+        @if (activeTab == "info")
+        {
+            <div class="profile-card">
+                <h2>Editar perfil</h2>
+                @if (currentUser != null)
+                {
+                    <EditForm Model="currentUser" OnValidSubmit="HandleUpdateProfile">
+                        <DataAnnotationsValidator />
+
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <InputText @bind-Value="currentUser.FullName" class="form-input" />
+                            <ValidationMessage For="@(() => currentUser.FullName)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <InputText @bind-Value="currentUser.PhoneNumber" class="form-input" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(infoMessage))
+                        {
+                            <p class="@(infoSuccess ? "auth-success" : "auth-error")">@infoMessage</p>
+                        }
+
+                        <button type="submit" class="btn play auth-btn" disabled="@isLoadingInfo">
+                            @(isLoadingInfo ? "Guardando..." : "Guardar cambios")
+                        </button>
+                    </EditForm>
+                }
+            </div>
+        }
+
+        @* Tab: Contraseña *@
+        @if (activeTab == "password")
+        {
+            <div class="profile-card">
+                <h2>Cambiar contraseña</h2>
+                <EditForm Model="changePasswordModel" OnValidSubmit="HandleChangePassword">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-group">
+                        <label>Contraseña actual</label>
+                        <InputText @bind-Value="changePasswordModel.CurrentPassword" class="form-input" type="password" />
+                        <ValidationMessage For="@(() => changePasswordModel.CurrentPassword)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nueva contraseña</label>
+                        <InputText @bind-Value="changePasswordModel.NewPassword" class="form-input" type="password" />
+                        <ValidationMessage For="@(() => changePasswordModel.NewPassword)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirmar nueva contraseña</label>
+                        <InputText @bind-Value="changePasswordModel.PasswordConfirm" class="form-input" type="password" />
+                        <ValidationMessage For="@(() => changePasswordModel.PasswordConfirm)" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(passwordMessage))
+                    {
+                        <p class="@(passwordSuccess ? "auth-success" : "auth-error")">@passwordMessage</p>
+                    }
+
+                    <button type="submit" class="btn play auth-btn" disabled="@isLoadingPassword">
+                        @(isLoadingPassword ? "Cambiando..." : "Cambiar contraseña")
+                    </button>
+                </EditForm>
+            </div>
+        }
+
+        @* Tab: Historial *@
+        @if (activeTab == "history")
+        {
+            <div class="profile-card">
+                <h2>Historial de vistas</h2>
+                <p class="coming-soon">🎬 Próximamente — acá aparecerán las películas y series que hayas visto.</p>
+            </div>
+        }
+
+        @* Tab: Favoritos *@
+        @if (activeTab == "favorites")
+        {
+            <div class="profile-card">
+                <h2>Mis favoritos</h2>
+                <p class="coming-soon">❤️ Próximamente — acá aparecerán tus películas y series favoritas.</p>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private User? currentUser;
+    private ChangePasswordDTO changePasswordModel = new();
+    private string activeTab = "info";
+
+    private string? infoMessage;
+    private bool infoSuccess;
+    private bool isLoadingInfo;
+
+    private string? passwordMessage;
+    private bool passwordSuccess;
+    private bool isLoadingPassword;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await UserService.GetProfileAsync();
+    }
+
+    private async Task HandleUpdateProfile()
+    {
+        isLoadingInfo = true;
+        infoMessage = null;
+
+        var (success, error) = await UserService.UpdateProfileAsync(currentUser!);
+        infoSuccess = success;
+        infoMessage = success ? "✅ Perfil actualizado correctamente." : error;
+
+        isLoadingInfo = false;
+    }
+
+    private async Task HandleChangePassword()
+    {
+        isLoadingPassword = true;
+        passwordMessage = null;
+
+        var (success, error) = await UserService.ChangePasswordAsync(changePasswordModel);
+        passwordSuccess = success;
+        passwordMessage = success ? "✅ Contraseña cambiada correctamente." : error;
+
+        if (success) changePasswordModel = new();
+
+        isLoadingPassword = false;
+    }
+}

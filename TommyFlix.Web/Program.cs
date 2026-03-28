@@ -34,5 +34,6 @@ builder.Services.AddScoped<AuthService>();
 
 // TMDB
 builder.Services.AddScoped<TmdbService>();
+builder.Services.AddScoped<UserService>();
 
 await builder.Build().RunAsync();
