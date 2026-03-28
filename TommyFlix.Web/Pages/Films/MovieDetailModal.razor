@@ -1,4 +1,6 @@
-﻿<div class="modal-backdrop @(IsVisible ? "show" : "")" @onclick="CloseModal">
+﻿@inject NavigationManager Nav
+
+<div class="modal-backdrop @(IsVisible ? "show" : "")" @onclick="CloseModal">
 </div>
 
 <div class="modal-container @(IsVisible ? "show" : "")">
@@ -13,6 +15,7 @@
                 <p class="overview">@Movie.Overview</p>
                 <div class="buttons">
                     <button class="btn play">▶ Reproducir</button>
+                    <button class="btn info" @onclick="() => GoToDetails(Movie.Id)">🎬 Ver detalle</button>
                     <button class="btn info">+ Mi Lista</button>
                 </div>
             </div>
@@ -32,4 +35,6 @@
         IsVisible = false;
         await OnClose.InvokeAsync(null);
     }
+
+    private void GoToDetails(int Id) => Nav.NavigateTo($"/movie/{Id}");
 }

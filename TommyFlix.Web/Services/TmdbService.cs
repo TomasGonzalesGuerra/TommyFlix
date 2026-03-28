@@ -20,14 +20,18 @@ public class TmdbService(IHttpClientFactory httpFactory)
         await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/on_the_air?language=es-ES");
 
     public async Task<Movie> GetMovieDetails(int id) =>
-        await _http.GetFromJsonAsync<Movie>($"movie/{id}?language=es-ES");
+    await _http.GetFromJsonAsync<Movie>($"movie/{id}?language=es-ES&append_to_response=credits");
 
     public async Task<TvSeries> GetSerieDetails(int id) =>
-        await _http.GetFromJsonAsync<TvSeries>($"tv/{id}?language=es-ES");
+        await _http.GetFromJsonAsync<TvSeries>($"tv/{id}?language=es-ES&append_to_response=credits");
 
     public async Task<TmdbResponse<Movie>> SearchMovies(string query) =>
         await _http.GetFromJsonAsync<TmdbResponse<Movie>>($"search/movie?query={Uri.EscapeDataString(query)}&language=es-ES");
 
     public async Task<TmdbResponse<TvSeries>> SearchSeries(string query) =>
         await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>($"search/tv?query={Uri.EscapeDataString(query)}&language=es-ES");
+
+
+
+
 }

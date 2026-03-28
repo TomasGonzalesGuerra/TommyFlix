@@ -1,0 +1,81 @@
+﻿@page "/movie/{Id:int}"
+@inject TmdbService TmdbService
+@inject NavigationManager Nav
+
+@if (movie == null)
+{
+    <div class="detail-loading">
+        <p>Cargando...</p>
+    </div>
+}
+else
+{
+    <div class="detail-hero" style="background-image: url('https://image.tmdb.org/t/p/original@(movie.Backdrop_Path)');">
+        <div class="detail-hero-overlay">
+            <div class="detail-hero-content">
+                <img class="detail-poster" src="https://image.tmdb.org/t/p/w300@(movie.Poster_Path)" alt="@movie.Title" />
+                <div class="detail-info">
+                    <h1>@movie.Title</h1>
+                    @if (!string.IsNullOrEmpty(movie.Tagline))
+                    {
+                        <p class="detail-tagline">"@movie.Tagline"</p>
+                    }
+                    <div class="detail-meta">
+                        <span>⭐ @movie.Vote_Average.ToString("0.0")</span>
+                        @if (movie.Runtime > 0)
+                        {
+                            <span>🕐 @($"{movie.Runtime / 60}h {movie.Runtime % 60}m")</span>
+                        }
+                        <span>📅 @movie.Release_Date?.Substring(0, 4)</span>
+                    </div>
+                    <div class="detail-genres">
+                        @foreach (var genre in movie.Genres ?? [])
+                        {
+                            <span class="genre-tag">@genre.Name</span>
+                        }
+                    </div>
+                    <p class="detail-overview">@movie.Overview</p>
+                    <div class="detail-buttons">
+                        <button class="btn play">▶ Reproducir</button>
+                        <button class="btn info">+ Mi Lista</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (movie.Credits?.Cast?.Any() == true)
+    {
+        <div class="detail-section">
+            <h2 class="section-title">Reparto</h2>
+            <div class="cast-grid">
+                @foreach (var actor in movie.Credits.Cast.Take(10))
+                {
+                    <div class="cast-card">
+                        @if (!string.IsNullOrEmpty(actor.Profile_Path))
+                        {
+                            <img src="https://image.tmdb.org/t/p/w185@(actor.Profile_Path)" alt="@actor.Name" />
+                        }
+                        else
+                        {
+                            <div class="cast-no-photo">👤</div>
+                        }
+                        <p class="cast-name">@actor.Name</p>
+                        <p class="cast-character">@actor.Character</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Movie? movie;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        movie = null;
+        movie = await TmdbService.GetMovieDetails(Id);
+    }
+}
