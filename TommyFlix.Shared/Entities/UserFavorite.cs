@@ -1,10 +1,9 @@
-namespace TommyFlix.Shared.Entities;
+ï»¿namespace TommyFlix.Shared.Entities;
 
-public class WatchHistory
+public class UserFavorite
 {
     public int Id { get; set; }
-    public DateTime WatchedAt { get; set; } = DateTime.UtcNow;
-    public int? TmdbEpisodeId { get; set; }   // opcional, si fue un episodio específico
+    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 
     public User? User { get; set; }
     public string? UserId { get; set; }

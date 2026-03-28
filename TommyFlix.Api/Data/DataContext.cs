@@ -6,27 +6,43 @@ namespace TommyFlix.Api.Data;
 
 public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<User>(options)
 {
-    public DbSet<Tag> Tags { get; set; }
-    public DbSet<Gender> Genders { get; set; }
-    public DbSet<CastMember> CastMembers { get; set; }
     public DbSet<UserRating> Ratings { get; set; }
     public DbSet<WatchHistory> WatchHistories { get; set; }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Serie> Series { get; set; }
-    public DbSet<Season> Seasons { get; set; }
-    public DbSet<Episode> Episodes { get; set; }
+    public DbSet<UserFavorite> Favorites { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Gender>().Property(g => g.Name).HasMaxLength(100).IsRequired();
-        modelBuilder.Entity<Tag>().Property(t => t.Name).HasMaxLength(100).IsRequired();
-        modelBuilder.Entity<Movie>().Property(m => m.Duration).IsRequired();
+        // Índice único: un user no puede poner 2 ratings a la misma peli
+        modelBuilder.Entity<UserRating>()
+            .HasIndex(r => new { r.UserId, r.MovieId })
+            .IsUnique()
+            .HasFilter("[MovieId] IS NOT NULL");
 
-        modelBuilder.Entity<Serie>().HasMany(s => s.Seasons).WithOne(s => s.Serie).HasForeignKey(s => s.SerieId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Season>().HasMany(s => s.Episodes).WithOne(e => e.Season).HasForeignKey(e => e.SeasonId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Season>().HasIndex(s => new { s.SerieId, s.SeasonNumber }).IsUnique();
-        modelBuilder.Entity<Episode>().HasIndex(e => new { e.SeasonId, e.EpisodeNumber }).IsUnique();
+        modelBuilder.Entity<UserRating>()
+            .HasIndex(r => new { r.UserId, r.SerieId })
+            .IsUnique()
+            .HasFilter("[SerieId] IS NOT NULL");
+
+        // Índice único: un user no puede favoritear 2 veces la misma peli
+        modelBuilder.Entity<UserFavorite>()
+            .HasIndex(f => new { f.UserId, f.MovieId })
+            .IsUnique()
+            .HasFilter("[MovieId] IS NOT NULL");
+
+        modelBuilder.Entity<UserFavorite>()
+            .HasIndex(f => new { f.UserId, f.SerieId })
+            .IsUnique()
+            .HasFilter("[SerieId] IS NOT NULL");
+
+        // Movie y Serie: TmdbId único
+        modelBuilder.Entity<Movie>()
+            .HasIndex(m => m.TmdbId).IsUnique();
+
+        modelBuilder.Entity<Serie>()
+            .HasIndex(s => s.TmdbId).IsUnique();
     }
 }

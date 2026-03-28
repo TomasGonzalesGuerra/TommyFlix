@@ -19,4 +19,5 @@ public class User : IdentityUser
 
     public ICollection<UserRating>? Ratings { get; set; }
     public ICollection<WatchHistory>? WatchHistories { get; set; }
+    public ICollection<UserFavorite>? Favorites { get; set; }
 }
