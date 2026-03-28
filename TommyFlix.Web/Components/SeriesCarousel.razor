@@ -1,4 +1,4 @@
-﻿@inject TmdbService TmdbService
+﻿@* @inject TmdbService TmdbService
 
 <MovieDetailModal Movie="@selectedSerieAsMovie" IsVisible="isModalVisible" OnClose="CloseModal" />
 
@@ -86,4 +86,69 @@
         selectedSerieAsMovie = null!;
         return Task.CompletedTask;
     }
+} *@
+
+
+
+
+
+
+
+
+
+
+@inject TmdbService TmdbService
+@inject NavigationManager Nav
+
+<div class="carousel-wrapper">
+    <button class="nav left" @onclick="Prev">❮</button>
+
+    <div class="carousel-viewport">
+        <div class="carousel-track" style="transform: translateX(-@(currentIndex * itemWidth)px)">
+            @if (series == null)
+            {
+                <p>Cargando...</p>
+            }
+            else
+            {
+                @foreach (var item in series)
+                {
+                    <div class="movie-card" @onclick="() => GoToSerie(item.Id)">
+                        <img src="@($"https://image.tmdb.org/t/p/w500{item.Poster_Path}")" alt="@item.Name" />
+                        <div class="overlay">
+                            <h4>@item.Name</h4>
+                            <p>⭐ @item.Vote_Average.ToString("0.0")</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <button class="nav right" @onclick="Next">❯</button>
+</div>
+
+@code {
+    private List<TvSeries>? series;
+    private int currentIndex = 0;
+    private int itemWidth = 200;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TmdbService.GetPopularSeries();
+        series = response?.Results;
+    }
+
+    private void Next()
+    {
+        if (series == null) return;
+        if (currentIndex < series.Count - 5) currentIndex++;
+    }
+
+    private void Prev()
+    {
+        if (currentIndex > 0) currentIndex--;
+    }
+
+    private void GoToSerie(int Id) => Nav.NavigateTo($"/serie/{Id}");
 }

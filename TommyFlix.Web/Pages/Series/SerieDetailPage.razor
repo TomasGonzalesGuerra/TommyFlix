@@ -1,0 +1,114 @@
+﻿@page "/serie/{Id:int}"
+@inject TmdbService TmdbService
+
+@if (serie == null)
+{
+    <div class="detail-loading">
+        <p>Cargando...</p>
+    </div>
+}
+else
+{
+    <div class="detail-hero" style="background-image: url('https://image.tmdb.org/t/p/original@(serie.Backdrop_Path)');">
+        <div class="detail-hero-overlay">
+            <div class="detail-hero-content">
+                <img class="detail-poster" src="https://image.tmdb.org/t/p/w300@(serie.Poster_Path)" alt="@serie.Name" />
+                <div class="detail-info">
+                    <h1>@serie.Name</h1>
+                    @if (!string.IsNullOrEmpty(serie.Tagline))
+                    {
+                        <p class="detail-tagline">"@serie.Tagline"</p>
+                    }
+                    <div class="detail-meta">
+                        <span>⭐ @serie.Vote_Average.ToString("0.0")</span>
+                        <span>📺 @serie.Number_Of_Seasons temporada@(serie.Number_Of_Seasons != 1 ? "s" : "")</span>
+                        <span>🎬 @serie.Number_Of_Episodes episodios</span>
+                        @if (!string.IsNullOrEmpty(serie.First_Air_Date))
+                        {
+                            <span>📅 @serie.First_Air_Date.Substring(0, 4)</span>
+                        }
+                        <span class="status-badge">@serie.Status</span>
+                    </div>
+                    <div class="detail-genres">
+                        @foreach (var genre in serie.Genres ?? [])
+                        {
+                            <span class="genre-tag">@genre.Name</span>
+                        }
+                    </div>
+                    <p class="detail-overview">@serie.Overview</p>
+                    <div class="detail-buttons">
+                        <button class="btn play">▶ Reproducir</button>
+                        <button class="btn info">+ Mi Lista</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Cast *@
+    @if (serie.Credits?.Cast?.Any() == true)
+    {
+        <div class="detail-section">
+            <h2 class="section-title">Reparto</h2>
+            <div class="cast-grid">
+                @foreach (var actor in serie.Credits.Cast.Take(10))
+                {
+                    <div class="cast-card">
+                        @if (!string.IsNullOrEmpty(actor.Profile_Path))
+                        {
+                            <img src="https://image.tmdb.org/t/p/w185@(actor.Profile_Path)" alt="@actor.Name" />
+                        }
+                        else
+                        {
+                            <div class="cast-no-photo">👤</div>
+                        }
+                        <p class="cast-name">@actor.Name</p>
+                        <p class="cast-character">@actor.Character</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @* Temporadas *@
+    @if (serie.Seasons?.Any() == true)
+    {
+        <div class="detail-section">
+            <h2 class="section-title">Temporadas</h2>
+            <div class="seasons-grid">
+                @foreach (var season in serie.Seasons.Where(s => s.Season_Number > 0))
+                {
+                    <div class="season-card">
+                        @if (!string.IsNullOrEmpty(season.Poster_Path))
+                        {
+                            <img src="https://image.tmdb.org/t/p/w185@(season.Poster_Path)" alt="@season.Name" />
+                        }
+                        else
+                        {
+                            <div class="cast-no-photo">🎬</div>
+                        }
+                        <div class="season-info">
+                            <p class="cast-name">@season.Name</p>
+                            <p class="cast-character">@season.Episode_Count episodios</p>
+                            @if (!string.IsNullOrEmpty(season.Air_Date))
+                            {
+                                <p class="cast-character">📅 @season.Air_Date.Substring(0, 4)</p>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private TvSeries? serie;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        serie = null;
+        serie = await TmdbService.GetSerieDetails(Id);
+    }
+}
