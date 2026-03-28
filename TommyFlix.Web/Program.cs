@@ -1,3 +1,5 @@
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TommyFlix.Web;
@@ -7,10 +9,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// HttpClient para tu propia API
+// HttpClient para tu API
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7000/") // ? cambi� por tu URL de API
+    BaseAddress = new Uri("https://localhost:7280/") // ← cambiá por tu URL
 });
 
 // HttpClient nombrado para TMDB
@@ -24,6 +26,13 @@ builder.Services.AddHttpClient("tmdb", client =>
         );
 });
 
+// Auth
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, TommyFlixAuthStateProvider>();
+builder.Services.AddScoped<AuthService>();
+
+// TMDB
 builder.Services.AddScoped<TmdbService>();
 
 await builder.Build().RunAsync();

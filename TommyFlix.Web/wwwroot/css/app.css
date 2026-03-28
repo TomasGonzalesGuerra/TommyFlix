@@ -227,3 +227,105 @@ button:hover {
     background: var(--ColoBlueMiddel);
     border-radius: 1rem;
 }
+
+
+
+
+
+
+
+
+/* ── AUTH ── */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: rgba(11, 30, 60, 0.85);
+    border: 1px solid rgba(201, 162, 74, 0.2);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: clamp(24px, 4vw, 48px);
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.auth-title {
+    color: var(--ColoGold);
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    gap: 6px;
+}
+
+    .form-group label {
+        color: var(--ColoWhiteSoft);
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+.form-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 162, 74, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--ColoWhiteSoft);
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+    .form-input:focus {
+        border-color: var(--ColoGold);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+.auth-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+}
+
+    .auth-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+.auth-error {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: rgba(234, 234, 234, 0.6);
+}
+
+    .auth-footer a {
+        color: var(--ColoGold);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }

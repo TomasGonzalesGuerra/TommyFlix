@@ -1,0 +1,91 @@
+﻿/* ── PROFILE MENU ── */
+.profile-menu {
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-name {
+    color: var(--ColoWhiteSoft);
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+}
+
+.profile-menu:hover .profile-name {
+    border-color: var(--ColoGold);
+    color: var(--ColoGold);
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: rgba(11, 30, 60, 0.97);
+    border: 1px solid rgba(201,162,74,0.3);
+    border-radius: 8px;
+    min-width: 160px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 200;
+    flex-direction: column;
+}
+
+.profile-menu:hover .profile-dropdown {
+    display: flex;
+}
+
+/* ::deep para elementos dentro de AuthorizeView */
+::deep .profile-dropdown a,
+::deep .logout-btn {
+    padding: 10px 16px;
+    color: var(--ColoWhiteSoft);
+    text-decoration: none;
+    font-size: 0.85rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    width: 100%;
+}
+
+    ::deep .profile-dropdown a:hover {
+        background: rgba(201,162,74,0.1);
+        color: var(--ColoGold);
+    }
+
+    ::deep .logout-btn:hover {
+        background: rgba(255, 80, 80, 0.1);
+        color: #ff6b6b;
+    }
+
+
+/* ── AVATAR ── */
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(201,162,74,0.3);
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.profile-menu:hover .profile-avatar {
+    border-color: var(--ColoGold);
+}
+
+.avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--ColoGold);
+}
+
+.avatar-placeholder {
+    font-size: 1.4rem;
+}

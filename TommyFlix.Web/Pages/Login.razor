@@ -1,0 +1,67 @@
+﻿@page "/login"
+@inject AuthService AuthService
+@inject NavigationManager Nav
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="auth-title">Iniciar Sesión</h2>
+
+        <EditForm Model="model" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Email</label>
+                <InputText @bind-Value="model.Email" class="form-input" placeholder="tu@email.com" />
+                <ValidationMessage For="@(() => model.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <InputText @bind-Value="model.Password" class="form-input" type="password" placeholder="••••••" />
+                <ValidationMessage For="@(() => model.Password)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <p class="auth-error">⚠️ @errorMessage</p>
+            }
+
+            <button type="submit" class="btn play auth-btn" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Cargando...</span>
+                }
+                else
+                {
+
+                    <span>Entrar</span>
+                }
+            </button>
+        </EditForm>
+
+        <p class="auth-footer">
+            ¿No tenés cuenta? <a href="/register">Registrate</a>
+        </p>
+    </div>
+</div>
+
+@code {
+    private LoginDTO model = new();
+    private string? errorMessage;
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var (success, error) = await AuthService.LoginAsync(model);
+
+        if (success)
+            Nav.NavigateTo("/");
+        else
+            errorMessage = error;
+
+        isLoading = false;
+    }
+}

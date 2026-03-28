@@ -1,18 +1,44 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthService AuthService
+@inject NavigationManager Nav
 
 <div class="app-container">
     <header>
         <div class="logo">TommyFlix</div>
 
         <nav class="menu">
-            <a href="">Inicio</a>
-            <a href="">Series</a>
-            <a href="">Películas</a>
-            <a href="">Mi Lista</a>
+            <a href="/">Inicio</a>
+            <a href="/series">Series</a>
+            <a href="/peliculas">Películas</a>
+            <a href="/mi-lista">Mi Lista</a>
         </nav>
 
         <div class="profile">
-            <span>👤</span>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="profile-menu">
+                        <div class="profile-avatar">
+                            @if (!string.IsNullOrEmpty(context.User.FindFirst("Photo")?.Value))
+                            {
+                                <img src="@context.User.FindFirst("Photo")?.Value" alt="avatar" class="avatar-img" />
+                            }
+                            else
+                            {
+                                <span class="avatar-placeholder">👤</span>
+                            }
+                            <span class="profile-name">@context.User.FindFirst("FullName")?.Value</span>
+                        </div>
+                        <div class="profile-dropdown">
+                            <a href="/perfil">Mi perfil</a>
+                            <button class="logout-btn" @onclick="HandleLogout">Cerrar sesión</button>
+                        </div>
+                    </div>
+                </Authorized>
+
+                <NotAuthorized>
+                    <a href="/login" class="btn play" style="padding: 6px 16px; font-size:0.85rem;">Iniciar sesión</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </header>
 
@@ -20,3 +46,11 @@
         @Body
     </main>
 </div>
+
+@code {
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        Nav.NavigateTo("/");
+    }
+}

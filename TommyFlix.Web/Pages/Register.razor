@@ -1,0 +1,84 @@
+﻿@page "/register"
+@inject AuthService AuthService
+@inject NavigationManager Nav
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="auth-title">Crear Cuenta</h2>
+
+        <EditForm Model="model" OnValidSubmit="HandleRegister">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <InputText @bind-Value="model.FullName" class="form-input" placeholder="Tu nombre" />
+                <ValidationMessage For="@(() => model.FullName)" />
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <InputText @bind-Value="model.Email" class="form-input" placeholder="tu@email.com" />
+                <ValidationMessage For="@(() => model.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label>Teléfono</label>
+                <InputText @bind-Value="model.PhoneNumber" class="form-input" placeholder="322 000 000" />
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <InputText @bind-Value="model.Password" class="form-input" type="password" placeholder="••••••" />
+                <ValidationMessage For="@(() => model.Password)" />
+            </div>
+
+            <div class="form-group">
+                <label>Confirmar contraseña</label>
+                <InputText @bind-Value="model.PasswordConfirm" class="form-input" type="password" placeholder="••••••" />
+                <ValidationMessage For="@(() => model.PasswordConfirm)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <p class="auth-error">⚠️ @errorMessage</p>
+            }
+
+            <button type="submit" class="btn play auth-btn" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Cargando...</span>
+                }
+                else
+                {
+
+                    <span>Registrarse</span>
+                }
+            </button>
+        </EditForm>
+
+        <p class="auth-footer">
+            ¿Ya tenés cuenta? <a href="/login">Iniciá sesión</a>
+        </p>
+    </div>
+</div>
+
+@code {
+    private UserDTO model = new();
+    private string? errorMessage;
+    private bool isLoading = false;
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var (success, error) = await AuthService.RegisterAsync(model);
+
+        if (success)
+            Nav.NavigateTo("/");
+        else
+            errorMessage = error;
+
+        isLoading = false;
+    }
+}
