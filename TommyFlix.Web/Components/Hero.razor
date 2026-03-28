@@ -1,8 +1,9 @@
-﻿<div class="hero" style="@($"background: url('https://image.tmdb.org/t/p/original/sample.jpg')")">
-    <div class="hero-overlay">
-        <h1>@Title</h1>
-        <p>@Description</p>
+﻿@inject TmdbService TmdbService
 
+<div class="hero" style="@($"background: url('https://image.tmdb.org/t/p/original{backdropPath}')")">
+    <div class="hero-overlay">
+        <h1>@title</h1>
+        <p>@description</p>
         <div class="hero-buttons">
             <button class="btn play">▶ Reproducir</button>
             <button class="btn info">ℹ Más info</button>
@@ -11,6 +12,19 @@
 </div>
 
 @code {
-    [Parameter] public string Title { get; set; } = "Título de ejemplo";
-    [Parameter] public string Description { get; set; } = "Descripción de la película...";
+    private string backdropPath = "/sample.jpg";
+    private string title = "Cargando...";
+    private string description = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TmdbService.GetPopularMovies();
+        var featured = response?.Results?.FirstOrDefault();
+        if (featured != null)
+        {
+            backdropPath = featured.Backdrop_Path ?? featured.Poster_Path ?? "/sample.jpg";
+            title = featured.Title ?? "";
+            description = featured.Overview ?? "";
+        }
+    }
 }

@@ -3,63 +3,31 @@ using TommyFlix.Web.Models;
 
 namespace TommyFlix.Web.Services;
 
-public class TmdbService(HttpClient http, IConfiguration config)
+public class TmdbService(IHttpClientFactory httpFactory)
 {
-    private readonly HttpClient _http = http;
-    private readonly IConfiguration _config = config;
+    private readonly HttpClient _http = httpFactory.CreateClient("tmdb");
 
-    public async Task<Movie> GetMovieDetails(int id)
-    {
-        var url = $"movie/{id}?api_key={_config["TmdbConfig:ApiKey"]}&language=es-ES";
-        return await _http.GetFromJsonAsync<Movie>(url);
-    }
+    public async Task<TmdbResponse<Movie>> GetPopularMovies() =>
+        await _http.GetFromJsonAsync<TmdbResponse<Movie>>("movie/popular?language=es-ES");
 
-    public async Task<TmdbResponse<TvSeries>> GetPopularSeries()
-    {
-        var url = $"tv/popular?api_key={_config["TmdbConfig:ApiKey"]}&language=es-ES";
-        return await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>(url);
-    }
+    public async Task<TmdbResponse<Movie>> GetPopularActionMovies() =>
+        await _http.GetFromJsonAsync<TmdbResponse<Movie>>("discover/movie?with_genres=28&language=es-ES");
 
-    public async Task<TvSeries> GetSerieDetails(int id)
-    {
-        var url = $"tv/{id}?api_key={_config["TmdbConfig:ApiKey"]}&language=es-ES";
-        return await _http.GetFromJsonAsync<TvSeries>(url);
-    }
+    public async Task<TmdbResponse<TvSeries>> GetPopularSeries() =>
+        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/popular?language=es-ES");
 
-    public async Task<TmdbResponse<Movie>> GetPopularMovies()
-    {
-        var url = $"movie/popular?api_key={_config["TmdbConfig:ApiKey"]}&language=es-ES";
-        return await _http.GetFromJsonAsync<TmdbResponse<Movie>>(url);
-    }
+    public async Task<TmdbResponse<TvSeries>> GetOnTheAirSeries() =>
+        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/on_the_air?language=es-ES");
 
-    // Opcional: por género (acción = 28)
-    public async Task<TmdbResponse<Movie>> GetPopularActionMovies()
-    {
-        var url = $"discover/movie?api_key={_config["TmdbConfig:ApiKey"]}&with_genres=28&language=es-ES";
-        return await _http.GetFromJsonAsync<TmdbResponse<Movie>>(url);
-    }
+    public async Task<Movie> GetMovieDetails(int id) =>
+        await _http.GetFromJsonAsync<Movie>($"movie/{id}?language=es-ES");
+
+    public async Task<TvSeries> GetSerieDetails(int id) =>
+        await _http.GetFromJsonAsync<TvSeries>($"tv/{id}?language=es-ES");
+
+    public async Task<TmdbResponse<Movie>> SearchMovies(string query) =>
+        await _http.GetFromJsonAsync<TmdbResponse<Movie>>($"search/movie?query={Uri.EscapeDataString(query)}&language=es-ES");
+
+    public async Task<TmdbResponse<TvSeries>> SearchSeries(string query) =>
+        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>($"search/tv?query={Uri.EscapeDataString(query)}&language=es-ES");
 }
-
-//public Task<TmdbResponse<Movie>> GetPopularMovies()
-//    {
-//        var url = $"movie/popular?api_key={ApiKey}&language=es-ES";
-//        return _http.GetFromJsonAsync<TmdbResponse<Movie>>(url);
-//    }
-
-//    public Task<TmdbResponse<Movie>> GetPopularActionMovies()
-//    {
-//        var url = $"discover/movie?api_key={ApiKey}&with_genres=28&language=es-ES";
-//        return _http.GetFromJsonAsync<TmdbResponse<Movie>>(url);
-//    }
-
-//    public Task<TmdbResponse<TvSeries>> GetPopularSeries()
-//    {
-//        var url = $"tv/popular?api_key={ApiKey}&language=es-ES";
-//        return _http.GetFromJsonAsync<TmdbResponse<TvSeries>>(url);
-//    }
-
-//    public Task<TmdbResponse<TvSeries>> GetOnTheAirSeries()
-//    {
-//        var url = $"tv/on_the_air?api_key={ApiKey}&language=es-ES";
-//        return _http.GetFromJsonAsync<TmdbResponse<TvSeries>>(url);
-//    }
