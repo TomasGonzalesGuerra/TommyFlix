@@ -32,7 +32,7 @@
 </div>
 
 @code {
-    private List<Movie> movies =[];
+    private List<FrontMovie>? movies =[];
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,7 +58,7 @@
 }
 
 @code {
-    private Movie selectedMovie = new();
+    private FrontMovie selectedMovie = new();
     private bool isModalVisible = false;
 
     private async Task OpenModal(int id)

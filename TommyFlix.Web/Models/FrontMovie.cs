@@ -1,6 +1,6 @@
 ﻿namespace TommyFlix.Web.Models;
 
-public class Movie
+public class FrontMovie
 {
     public int Id { get; set; }
     public string? Title { get; set; }

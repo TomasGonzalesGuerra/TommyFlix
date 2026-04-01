@@ -227,3 +227,9 @@
 .season-info {
     padding: 4px 0;
 }
+
+.btn.fav-active {
+    background: rgba(255, 80, 80, 0.2);
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+}

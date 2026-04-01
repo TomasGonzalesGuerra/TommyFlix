@@ -18,22 +18,28 @@
 }
 
 .profile-dropdown {
-    display: none;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     right: 0;
     top: calc(100% + 8px);
     background: rgba(11, 30, 60, 0.97);
-    border: 1px solid rgba(201,162,74,0.3);
+    border: 1px solid rgba(201,162,74,0.2);
     border-radius: 8px;
     min-width: 160px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     z-index: 200;
-    flex-direction: column;
 }
 
-.profile-menu:hover .profile-dropdown {
-    display: flex;
+.dropdown-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+}
+
+.profile-dropdown {
+    z-index: 200; /* encima del backdrop */
 }
 
 /* ::deep para elementos dentro de AuthorizeView */

@@ -26,14 +26,15 @@ builder.Services.AddHttpClient("tmdb", client =>
         );
 });
 
-// Auth
+// AuthServices
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, TommyFlixAuthStateProvider>();
 builder.Services.AddScoped<AuthService>();
 
-// TMDB
+// MyServices
 builder.Services.AddScoped<TmdbService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<FavoriteService>();
 
 await builder.Build().RunAsync();

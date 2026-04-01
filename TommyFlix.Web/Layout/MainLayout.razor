@@ -17,7 +17,7 @@
             <AuthorizeView>
                 <Authorized>
                     <div class="profile-menu">
-                        <div class="profile-avatar">
+                        <div class="profile-avatar" @onclick="ToggleDropdown">
                             @if (!string.IsNullOrEmpty(context.User.FindFirst("Photo")?.Value))
                             {
                                 <img src="@context.User.FindFirst("Photo")?.Value" alt="avatar" class="avatar-img" />
@@ -28,13 +28,16 @@
                             }
                             <span class="profile-name">@context.User.FindFirst("FullName")?.Value</span>
                         </div>
-                        <div class="profile-dropdown">
-                            <a href="/perfil">Mi perfil</a>
-                            <button class="logout-btn" @onclick="HandleLogout">Cerrar sesión</button>
-                        </div>
+                        @if (showDropdown)
+                        {
+                            <div class="dropdown-backdrop" @onclick="CloseDropdown"></div>
+                            <div class="profile-dropdown">
+                                <a href="/perfil" @onclick="CloseDropdown">Mi perfil</a>
+                                <button class="logout-btn" @onclick="HandleLogout">Cerrar sesión</button>
+                            </div>
+                        }
                     </div>
                 </Authorized>
-
                 <NotAuthorized>
                     <a href="/login" class="btn play" style="padding: 6px 16px; font-size:0.85rem;">Iniciar sesión</a>
                 </NotAuthorized>
@@ -48,8 +51,14 @@
 </div>
 
 @code {
+    private bool showDropdown = false;
+
+    private void ToggleDropdown() => showDropdown = !showDropdown;
+    private void CloseDropdown() => showDropdown = false;
+
     private async Task HandleLogout()
     {
+        showDropdown = false;
         await AuthService.LogoutAsync();
         Nav.NavigateTo("/");
     }

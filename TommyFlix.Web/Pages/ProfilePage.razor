@@ -1,9 +1,11 @@
 ﻿@page "/perfil"
+@inject TmdbService TmdbService
+@using Microsoft.AspNetCore.Authorization
+@using TommyFlix.Shared.Entities
 @inject UserService UserService
 @inject AuthService AuthService
 @inject NavigationManager Nav
-@using Microsoft.AspNetCore.Authorization
-@using TommyFlix.Shared.Entities
+@inject FavoriteService FavoriteService
 @attribute [Authorize]
 
 <div class="profile-page">
@@ -36,7 +38,7 @@
         <button class="tab-btn @(activeTab == "history" ? "active" : "")" @onclick='() => activeTab = "history"'>
             🎬 Historial
         </button>
-        <button class="tab-btn @(activeTab == "favorites" ? "active" : "")" @onclick='() => activeTab = "favorites"'>
+        <button class="tab-btn @(activeTab == "favorites" ? "active" : "")" @onclick='() => SetTab("favorites")'>
             ❤️ Favoritos
         </button>
     </div>
@@ -128,11 +130,59 @@
         @if (activeTab == "favorites")
         {
             <div class="profile-card">
-                <h2>Mis favoritos</h2>
-                <p class="coming-soon">❤️ Próximamente — acá aparecerán tus películas y series favoritas.</p>
+                <h2>❤️ Mis favoritos</h2>
+
+                @if (loadingFavorites)
+                {
+                    <p class="coming-soon">Cargando favoritos...</p>
+                }
+                else
+                {
+                    @if (favoriteMovies.Any())
+                    {
+                        <h3 class="favorites-subtitle">🎬 Películas</h3>
+                        <div class="favorites-grid">
+                            @foreach (var item in favoriteMovies)
+                            {
+                                <div class="fav-card" @onclick="() => GoToMovie(item.Id)">
+                                    <img src="https://image.tmdb.org/t/p/w300@(item.Poster_Path)" alt="@item.Title" />
+                                    <div class="fav-overlay">
+                                        <p>@item.Title</p>
+                                        <button class="fav-remove" @onclick:stopPropagation
+                                                @onclick="() => RemoveMovieFavorite(item.Id)">✖</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @if (favoriteSeries.Any())
+                    {
+                        <h3 class="favorites-subtitle">📺 Series</h3>
+                        <div class="favorites-grid">
+                            @foreach (var item in favoriteSeries)
+                            {
+                                <div class="fav-card" @onclick="() => GoToSerie(item.Id)">
+                                    <img src="https://image.tmdb.org/t/p/w300@(item.Poster_Path)" alt="@item.Name" />
+                                    <div class="fav-overlay">
+                                        <p>@item.Name</p>
+                                        <button class="fav-remove" @onclick:stopPropagation
+                                                @onclick="() => RemoveSerieFavorite(item.Id)">
+                                            ✖
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @if (!favoriteMovies.Any() && !favoriteSeries.Any())
+                    {
+                        <p class="coming-soon">No tenés favoritos todavía. ❤️</p>
+                    }
+                }
             </div>
         }
-
     </div>
 </div>
 
@@ -179,4 +229,42 @@
 
         isLoadingPassword = false;
     }
+}
+
+@code{
+    private List<FrontMovie> favoriteMovies = [];
+    private List<TvSeries> favoriteSeries = [];
+    private bool loadingFavorites = false;
+
+    // Cargar favoritos cuando se activa el tab
+    private async Task SetTab(string tab)
+    {
+        activeTab = tab;
+        if (tab == "favorites" && !favoriteMovies.Any() && !favoriteSeries.Any())
+            await LoadFavoritesAsync();
+    }
+
+    private async Task LoadFavoritesAsync()
+    {
+        loadingFavorites = true;    
+        var (movies, series) = await FavoriteService.GetFavoritesWithDetailsAsync(TmdbService);
+        favoriteMovies = movies;
+        favoriteSeries = series;
+        loadingFavorites = false;
+    }
+
+    private async Task RemoveMovieFavorite(int tmdbId)
+    {
+        await FavoriteService.ToggleMovieFavoriteAsync(tmdbId, true);
+        favoriteMovies.RemoveAll(m => m.Id == tmdbId);
+    }
+
+    private async Task RemoveSerieFavorite(int tmdbId)
+    {
+        await FavoriteService.ToggleSerieFavoriteAsync(tmdbId, true);
+        favoriteSeries.RemoveAll(s => s.Id == tmdbId);
+    }
+
+    private void GoToMovie(int MovieID) => Nav.NavigateTo($"/movie/{MovieID}");
+    private void GoToSerie(int SerieID) => Nav.NavigateTo($"/serie/{SerieID}");
 }
