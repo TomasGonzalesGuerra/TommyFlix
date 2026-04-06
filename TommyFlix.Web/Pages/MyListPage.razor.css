@@ -1,0 +1,21 @@
+﻿.mylist-page {
+    padding: clamp(20px, 4vw, 50px);
+}
+
+.mylist-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.mylist-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 60px 20px;
+    color: var(--ColoWhiteSoft);
+    opacity: 0.6;
+    font-size: 1.1rem;
+}

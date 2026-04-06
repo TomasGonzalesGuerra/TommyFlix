@@ -1,30 +1,60 @@
-﻿@inject TmdbService TmdbService
+﻿@inject NavigationManager _Nav
 
-<div class="hero" style="@($"background: url('https://image.tmdb.org/t/p/original{backdropPath}')")">
+<div class="hero" style="background-image: url('https://image.tmdb.org/t/p/original@(backdropPath)');">
     <div class="hero-overlay">
         <h1>@title</h1>
         <p>@description</p>
         <div class="hero-buttons">
-            <button class="btn play">▶ Reproducir</button>
-            <button class="btn info">ℹ Más info</button>
+            @if (!string.IsNullOrEmpty(detailRoute))
+            {
+                <button class="btn play" @onclick='() => _Nav.NavigateTo(detailRoute)'>▶ Ver detalle</button>
+            }
+            <slot />
         </div>
     </div>
 </div>
 
 @code {
+    // Parámetros opcionales para pasar datos desde afuera
+    [Parameter] public FrontMovie? Movie { get; set; }
+    [Parameter] public TvSeries? Serie { get; set; }
+
+    // Si no se pasa nada carga automático desde TMDB
+    [Inject] private TmdbService TmdbService { get; set; } = default!;
+
     private string backdropPath = "/sample.jpg";
     private string title = "Cargando...";
     private string description = "";
+    private string detailRoute = "";
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        var response = await TmdbService.GetPopularMovies();
-        var featured = response?.Results?.FirstOrDefault();
-        if (featured != null)
+        if (Movie != null)
         {
-            backdropPath = featured.Backdrop_Path ?? featured.Poster_Path ?? "/sample.jpg";
-            title = featured.Title ?? "";
-            description = featured.Overview ?? "";
+            backdropPath = Movie.Backdrop_Path ?? Movie.Poster_Path ?? "/sample.jpg";
+            title = Movie.Title ?? "";
+            description = Movie.Overview ?? "";
+            detailRoute = $"/movie/{Movie.Id}";
+        }
+        else if (Serie != null)
+        {
+            backdropPath = Serie.Backdrop_Path ?? Serie.Poster_Path ?? "/sample.jpg";
+            title = Serie.Name ?? "";
+            description = Serie.Overview ?? "";
+            detailRoute = $"/serie/{Serie.Id}";
+        }
+        else
+        {
+            // Sin parámetros → carga automático la más popular
+            var response = await TmdbService.GetPopularMovies();
+            var featured = response?.Results?.FirstOrDefault();
+            if (featured != null)
+            {
+                backdropPath = featured.Backdrop_Path ?? featured.Poster_Path ?? "/sample.jpg";
+                title = featured.Title ?? "";
+                description = featured.Overview ?? "";
+                detailRoute = $"/movie/{featured.Id}";
+            }
         }
     }
 }

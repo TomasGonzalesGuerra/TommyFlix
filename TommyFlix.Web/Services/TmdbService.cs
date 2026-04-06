@@ -16,9 +16,6 @@ public class TmdbService(IHttpClientFactory httpFactory)
     public async Task<TmdbResponse<TvSeries>> GetPopularSeries() =>
         await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/popular?language=es-ES");
 
-    public async Task<TmdbResponse<TvSeries>> GetOnTheAirSeries() =>
-        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/on_the_air?language=es-ES");
-
     public async Task<FrontMovie> GetMovieDetails(int id) =>
     await _http.GetFromJsonAsync<FrontMovie>($"movie/{id}?language=es-ES&append_to_response=credits");
 
@@ -32,6 +29,21 @@ public class TmdbService(IHttpClientFactory httpFactory)
         await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>($"search/tv?query={Uri.EscapeDataString(query)}&language=es-ES");
 
 
+    // Películas
+    public async Task<TmdbResponse<FrontMovie>> GetTopRatedMovies() =>
+        await _http.GetFromJsonAsync<TmdbResponse<FrontMovie>>("movie/top_rated?language=es-ES");
 
+    public async Task<TmdbResponse<FrontMovie>> GetActionMovies() =>
+        await _http.GetFromJsonAsync<TmdbResponse<FrontMovie>>("discover/movie?with_genres=28&language=es-ES");
+
+    public async Task<TmdbResponse<FrontMovie>> GetHorrorMovies() =>
+        await _http.GetFromJsonAsync<TmdbResponse<FrontMovie>>("discover/movie?with_genres=27&language=es-ES");
+
+    // Series
+    public async Task<TmdbResponse<TvSeries>> GetTopRatedSeries() =>
+        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/top_rated?language=es-ES");
+
+    public async Task<TmdbResponse<TvSeries>> GetOnTheAirSeries() =>
+        await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/on_the_air?language=es-ES");
 
 }

@@ -1,0 +1,92 @@
+﻿@page "/mi-lista"
+@using Microsoft.AspNetCore.Authorization
+@inject FavoriteService _FavoriteService
+@inject TmdbService _TmdbService
+@inject NavigationManager _Nav
+@attribute [Authorize]
+
+<div class="mylist-page">
+    <h1 class="section-title">🕐 Ver más tarde</h1>
+
+    @if (isLoading)
+    {
+        <p class="coming-soon">Cargando tu lista...</p>
+    }
+    else if (!movieList.Any() && !serieList.Any())
+    {
+        <div class="mylist-empty">
+            <p>😕 Tu lista está vacía.</p>
+            <a href="/peliculas" class="btn play">Explorar películas</a>
+            <a href="/series" class="btn info">Explorar series</a>
+        </div>
+    }
+    else
+    {
+        @if (movieList.Any())
+        {
+            <h2 class="section-title">🎬 Películas</h2>
+            <div class="mylist-grid">
+                @foreach (var item in movieList)
+                {
+                    <div class="fav-card" @onclick="() => GoToMovie(item.Id)">
+                        <img src="https://image.tmdb.org/t/p/w300@(item.Poster_Path)" alt="@item.Title" />
+                        <div class="fav-overlay">
+                            <p>@item.Title</p>
+                            <button class="fav-remove" @onclick:stopPropagation
+                                    @onclick="() => RemoveMovie(item.Id)">
+                                ✖
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (serieList.Any())
+        {
+            <h2 class="section-title">📺 Series</h2>
+            <div class="mylist-grid">
+                @foreach (var item in serieList)
+                {
+                    <div class="fav-card" @onclick="() => GoToSerie(item.Id)">
+                        <img src="https://image.tmdb.org/t/p/w300@(item.Poster_Path)" alt="@item.Name" />
+                        <div class="fav-overlay">
+                            <p>@item.Name</p>
+                            <button class="fav-remove" @onclick:stopPropagation
+                                    @onclick="() => RemoveSerie(item.Id)">✖</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<FrontMovie> movieList = [];
+    private List<TvSeries> serieList = [];
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var (movies, series) = await _FavoriteService.GetFavoritesWithDetailsAsync(_TmdbService);
+        movieList = movies;
+        serieList = series;
+        isLoading = false;
+    }
+
+    private async Task RemoveMovie(int tmdbId)
+    {
+        await _FavoriteService.ToggleMovieFavoriteAsync(tmdbId, true);
+        movieList.RemoveAll(m => m.Id == tmdbId);
+    }
+
+    private async Task RemoveSerie(int tmdbId)
+    {
+        await _FavoriteService.ToggleSerieFavoriteAsync(tmdbId, true);
+        serieList.RemoveAll(s => s.Id == tmdbId);
+    }
+
+     private void GoToMovie(int MovieID) => _Nav.NavigateTo($"/serie/{MovieID}");
+     private void GoToSerie(int SerieID) => _Nav.NavigateTo($"/serie/{SerieID}");
+}

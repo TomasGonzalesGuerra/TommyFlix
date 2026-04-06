@@ -1,0 +1,81 @@
+﻿@typeparam TItem
+@inject NavigationManager _Nav
+
+<div class="carousel-wrapper">
+    <button class="nav left" @onclick="Prev">❮</button>
+    <div class="carousel-viewport">
+        <div class="carousel-track" style="transform: translateX(-@(currentIndex* itemWidth)px)">
+            @if (items == null)
+            {
+                <p>Cargando...</p>
+            }
+            else
+            {
+                @foreach (var item in items)
+                {
+                    <div class="movie-card" @onclick="() => Navigate(item)">
+                        <img src="@($"https://image.tmdb.org/t/p/w500{GetPoster(item)}")" alt="@GetTitle(item)" />
+                        <div class="overlay">
+                            <h4>@GetTitle(item)</h4>
+                            <p>⭐ @GetRating(item).ToString("0.0")</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <button class="nav right" @onclick="Next">❯</button>
+</div>
+
+@code {
+    [Parameter] public List<TItem>? Items { get; set; }
+    [Parameter] public string Type { get; set; } = "movie"; // "movie" o "serie"
+
+    private List<TItem>? items => Items;
+    private int currentIndex = 0;
+    private int itemWidth = 200;
+
+    private void Next()
+    {
+        if (items == null) return;
+        if (currentIndex < items.Count - 5) currentIndex++;
+    }
+
+    private void Prev()
+    {
+        if (currentIndex > 0) currentIndex--;
+    }
+
+    private string GetPoster(TItem item) => item switch
+    {
+        TommyFlix.Web.Models.FrontMovie m => m.Poster_Path ?? "",
+        TommyFlix.Web.Models.TvSeries s => s.Poster_Path ?? "",
+        _ => ""
+    };
+
+    private string GetTitle(TItem item) => item switch
+    {
+        TommyFlix.Web.Models.FrontMovie m => m.Title ?? "",
+        TommyFlix.Web.Models.TvSeries s => s.Name ?? "",
+        _ => ""
+    };
+
+    private double GetRating(TItem item) => item switch
+    {
+        TommyFlix.Web.Models.FrontMovie m => m.Vote_Average,
+        TommyFlix.Web.Models.TvSeries s => s.Vote_Average,
+        _ => 0
+    };
+
+    private void Navigate(TItem item)
+    {
+        var route = item switch
+        {
+            TommyFlix.Web.Models.FrontMovie m => $"/movie/{m.Id}",
+            TommyFlix.Web.Models.TvSeries s => $"/serie/{s.Id}",
+            _ => "/"
+        };
+
+        _Nav.NavigateTo(route);
+    }
+}

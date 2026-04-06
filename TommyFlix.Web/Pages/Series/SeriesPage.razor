@@ -1,0 +1,36 @@
+﻿@page "/series"
+@inject TmdbService TmdbService
+
+
+@if (onAir != null)
+{
+    <Hero Serie="@onAir.FirstOrDefault()" />
+}
+
+<h2 class="section-title">🔥 Populares</h2>
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@popular" Type="serie" />
+
+<h2 class="section-title">📡 En Emisión</h2>
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@onAir" Type="serie" />
+
+<h2 class="section-title">⭐ Mejor Valoradas</h2>
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@topRated" Type="serie" />
+
+@code {
+    private List<TvSeries>? popular;
+    private List<TvSeries>? onAir;
+    private List<TvSeries>? topRated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var results = await Task.WhenAll(
+            TmdbService.GetPopularSeries(),
+            TmdbService.GetOnTheAirSeries(),
+            TmdbService.GetTopRatedSeries()
+        );
+
+        popular = results[0].Results;
+        onAir = results[1].Results;
+        topRated = results[2].Results;
+    }
+}
