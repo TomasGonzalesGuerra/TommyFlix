@@ -1,0 +1,129 @@
+﻿@page "/watch/movie/{Id:int}"
+@page "/watch/serie/{Id:int}"
+@inject TmdbService _TmdbService
+@inject NavigationManager _Nav
+@inject IJSRuntime _JS
+
+@if (isLoading)
+{
+    <div class="watch-loading">
+        <p>Cargando...</p>
+    </div>
+}
+else if (trailerKey == null)
+{
+    <div class="watch-loading">
+        <p>😕 No hay trailer disponible para este título.</p>
+        <button class="btn play" @onclick="GoBack">← Volver</button>
+    </div>
+}
+else
+{
+    <div class="watch-page">
+        <!-- Player -->
+        <div class="watch-player">
+            <iframe src="https://www.youtube.com/embed/@trailerKey?autoplay=1&rel=0&modestbranding=1"
+                    title="@title"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Info -->
+        <div class="watch-info">
+            <div class="watch-info-header">
+                <button class="back-btn" @onclick="GoBack">← Volver</button>
+                <span class="watch-type-badge">🎬 Trailer oficial</span>
+            </div>
+
+            <div class="watch-info-content">
+                <img class="watch-poster" src="https://image.tmdb.org/t/p/w300@posterPath" alt="@title" />
+                <div>
+                    <h1 class="watch-title">@title</h1>
+                    @if (!string.IsNullOrEmpty(tagline))
+                    {
+                        <p class="watch-tagline">"@tagline"</p>
+                    }
+                    <div class="watch-meta">
+                        <span>⭐ @rating.ToString("0.0")</span>
+                        <span>📅 @year</span>
+                        @if (runtime > 0)
+                        {
+                            <span>🕐 @($"{runtime / 60}h {runtime % 60}m")</span>
+                        }
+                    </div>
+                    <div class="watch-genres">
+                        @foreach (var genre in genres)
+                        {
+                            <span class="genre-tag">@genre</span>
+                        }
+                    </div>
+                    <p class="watch-overview">@overview</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private bool isLoading = true;
+    private string? trailerKey;
+    private string title = "";
+    private string? tagline;
+    private string? posterPath;
+    private string? overview;
+    private double rating;
+    private string year = "";
+    private int runtime;
+    private List<string> genres = [];
+    private bool isSerie => _Nav.Uri.Contains("/watch/serie/");
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        trailerKey = null;
+
+        if (isSerie)
+            await LoadSerieAsync();
+        else
+            await LoadMovieAsync();
+
+        isLoading = false;
+    }
+
+    private async Task LoadMovieAsync()
+    {
+        var movie = await _TmdbService.GetMovieDetails(Id);
+        var videos = await _TmdbService.GetMovieVideos(Id);
+        trailerKey = _TmdbService.GetBestTrailerKey(videos);
+
+        title = movie?.Title ?? "";
+        tagline = movie?.Tagline;
+        posterPath = movie?.Poster_Path;
+        overview = movie?.Overview;
+        rating = movie?.Vote_Average ?? 0;
+        year = movie?.Release_Date?.Substring(0, 4) ?? "";
+        runtime = movie?.Runtime ?? 0;
+        genres = movie?.Genres?.Select(g => g.Name ?? "").ToList() ?? [];
+    }
+
+    private async Task LoadSerieAsync()
+    {
+        var serie = await _TmdbService.GetSerieDetails(Id);
+        var videos = await _TmdbService.GetSerieVideos(Id);
+        trailerKey = _TmdbService.GetBestTrailerKey(videos);
+
+        title = serie?.Name ?? "";
+        tagline = serie?.Tagline;
+        posterPath = serie?.Poster_Path;
+        overview = serie?.Overview;
+        rating = serie?.Vote_Average ?? 0;
+        year = serie?.First_Air_Date?.Substring(0, 4) ?? "";
+        genres = serie?.Genres?.Select(g => g.Name ?? "").ToList() ?? [];
+    }
+
+    private async Task GoBack() => await _JS.InvokeVoidAsync("history.back");
+}

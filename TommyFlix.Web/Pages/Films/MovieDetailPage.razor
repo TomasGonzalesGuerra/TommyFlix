@@ -1,4 +1,5 @@
 ﻿@page "/movie/{Id:int}"
+@inject NavigationManager _Nav
 @inject TmdbService _TmdbService
 @inject FavoriteService _FavoriteService
 @inject AuthenticationStateProvider _AuthStateProvider
@@ -41,8 +42,6 @@ else
                     <p class="detail-overview">@movie.Overview</p>
                     
                     <div class="detail-buttons">
-                        <button class="btn play">▶ Reproducir</button>
-
                         @if (isLoggedIn)
                         {
                             <button class="btn @(isFavorite ? "fav-active" : "info")" @onclick="ToggleFavorite">
@@ -51,6 +50,7 @@ else
                         }
 
                         <button class="btn info">+ Mi Lista</button>
+                        <button class="btn play" @onclick='() => _Nav.NavigateTo($"/watch/movie/{Id}")'>▶ Reproducir</button>
                     </div>
                 </div>
             </div>

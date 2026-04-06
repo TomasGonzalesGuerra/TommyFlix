@@ -1,0 +1,126 @@
+﻿.watch-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    gap: 20px;
+    color: var(--ColoWhiteSoft);
+    font-size: 1.1rem;
+}
+
+.watch-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #000;
+}
+
+/* Player */
+.watch-player {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    max-height: 75vh;
+}
+
+    .watch-player iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+/* Info */
+.watch-info {
+    padding: clamp(16px, 3vw, 40px);
+    background: var(--ColoBlueMain);
+}
+
+.watch-info-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--ColoWhiteSoft);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+    .back-btn:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+.watch-type-badge {
+    background: rgba(201,162,74,0.15);
+    border: 1px solid rgba(201,162,74,0.4);
+    color: var(--ColoGold);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.watch-info-content {
+    display: flex;
+    gap: clamp(16px, 3vw, 40px);
+    align-items: flex-start;
+}
+
+.watch-poster {
+    width: clamp(80px, 12vw, 150px);
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.watch-title {
+    color: var(--ColoGold);
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    margin: 0 0 6px 0;
+    text-shadow: 0 0 15px rgba(201,162,74,0.4);
+}
+
+.watch-tagline {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.watch-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+    .watch-meta span {
+        background: rgba(255,255,255,0.08);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--ColoWhiteSoft);
+    }
+
+.watch-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.watch-overview {
+    line-height: 1.7;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    max-width: 700px;
+}

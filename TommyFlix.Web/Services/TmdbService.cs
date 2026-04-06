@@ -46,4 +46,31 @@ public class TmdbService(IHttpClientFactory httpFactory)
     public async Task<TmdbResponse<TvSeries>> GetOnTheAirSeries() =>
         await _http.GetFromJsonAsync<TmdbResponse<TvSeries>>("tv/on_the_air?language=es-ES");
 
+
+    // Videos
+    public async Task<TmdbVideosResponse?> GetMovieVideos(int id) =>
+    await _http.GetFromJsonAsync<TmdbVideosResponse>($"movie/{id}/videos?language=es-ES");
+
+    public async Task<TmdbVideosResponse?> GetSerieVideos(int id) =>
+        await _http.GetFromJsonAsync<TmdbVideosResponse>($"tv/{id}/videos?language=es-ES");
+
+    // Helper para obtener el mejor trailer disponible
+    public string? GetBestTrailerKey(TmdbVideosResponse? videos)
+    {
+        if (videos?.Results == null) return null;
+
+        // Primero busca trailer oficial en español
+        var trailer = videos.Results
+            .FirstOrDefault(v => v.Site == "YouTube" && v.Type == "Trailer" && v.Official);
+
+        // Si no hay en español busca cualquier trailer de YouTube
+        trailer ??= videos.Results
+            .FirstOrDefault(v => v.Site == "YouTube" && v.Type == "Trailer");
+
+        // Si no hay trailer busca teaser
+        trailer ??= videos.Results
+            .FirstOrDefault(v => v.Site == "YouTube");
+
+        return trailer?.Key;
+    }
 }
