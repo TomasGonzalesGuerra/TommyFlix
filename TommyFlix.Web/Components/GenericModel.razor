@@ -1,0 +1,120 @@
+﻿@typeparam TItem
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+@if (IsVisible && Item != null)
+{
+    <div class="modal-backdrop show" @onclick="HandleClose"></div>
+    <div class="modal-container show">
+        <div class="modal-content">
+            <img class="backdrop" src="https://image.tmdb.org/t/p/original@(GetBackdrop())" alt="@GetTitle()" />
+
+            <button class="modal-close" @onclick="HandleClose">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="detail-overlay">
+                <h1>@GetTitle()</h1>
+
+                <div class="modal-meta">
+                    <span>⭐ @GetRating().ToString("0.0")</span>
+                    <span>📅 @GetYear()</span>
+                </div>
+
+                <p class="overview">@GetOverview()</p>
+
+                <div class="detail-buttons">
+                    <button class="icon-btn play-btn" title="Reproducir trailer"
+                            @onclick="GoWatch">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+
+                    <button class="icon-btn" title="Ver detalle"
+                            @onclick="GoDetail">
+                        <i class="bi bi-info-circle"></i>
+                    </button>
+
+                    <button class="icon-btn" title="+ Mi Lista">
+                        <i class="bi bi-clock"></i>
+                    </button>
+
+                    <button class="icon-btn" title="Me gusta">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public TItem? Item { get; set; }
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task HandleClose() => await OnClose.InvokeAsync();
+
+    private string GetBackdrop() => Item switch
+    {
+        FrontMovie m => m.Backdrop_Path ?? m.Poster_Path ?? "",
+        TvSeries s => s.Backdrop_Path ?? s.Poster_Path ?? "",
+        _ => ""
+    };
+
+    private string GetTitle() => Item switch
+    {
+        FrontMovie m => m.Title ?? "",
+        TvSeries s => s.Name ?? "",
+        _ => ""
+    };
+
+    private double GetRating() => Item switch
+    {
+        FrontMovie m => m.Vote_Average,
+        TvSeries s => s.Vote_Average,
+        _ => 0
+    };
+
+    private string GetYear() => Item switch
+    {
+        FrontMovie m => m.Release_Date?.Substring(0, 4) ?? "",
+        TvSeries s => s.First_Air_Date?.Substring(0, 4) ?? "",
+        _ => ""
+    };
+
+    private string GetOverview() => Item switch
+    {
+        FrontMovie m => m.Overview ?? "",
+        TvSeries s => s.Overview ?? "",
+        _ => ""
+    };
+
+    private int GetId() => Item switch
+    {
+        FrontMovie m => m.Id,
+        TvSeries s => s.Id,
+        _ => 0
+    };
+
+    private void GoDetail()
+    {
+        var route = Item switch
+        {
+            FrontMovie => $"/movie/{GetId()}",
+            TvSeries => $"/serie/{GetId()}",
+            _ => "/"
+        };
+        Nav.NavigateTo(route);
+    }
+
+    private void GoWatch()
+    {
+        var route = Item switch
+        {
+            FrontMovie => $"/watch/movie/{GetId()}",
+            TvSeries => $"/watch/serie/{GetId()}",
+            _ => "/"
+        };
+        Nav.NavigateTo(route);
+    }
+}

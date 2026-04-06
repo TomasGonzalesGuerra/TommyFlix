@@ -42,15 +42,23 @@ else
                     <p class="detail-overview">@movie.Overview</p>
                     
                     <div class="detail-buttons">
-                        @if (isLoggedIn)
-                        {
-                            <button class="btn @(isFavorite ? "fav-active" : "info")" @onclick="ToggleFavorite">
-                                @(isFavorite ? "❤️ En favoritos" : "Te Gusta???")
-                            </button>
-                        }
+                        <button class="icon-btn play-btn" title="Reproducir trailer"
+                                @onclick='() => _Nav.NavigateTo($"/watch/movie/{Id}")'>
+                            <i class="bi bi-play-fill"></i>
+                        </button>
 
-                        <button class="btn info">+ Mi Lista</button>
-                        <button class="btn play" @onclick='() => _Nav.NavigateTo($"/watch/movie/{Id}")'>▶ Reproducir</button>
+                        <button class="icon-btn" title="@(isFavorite ? "Quitar de favoritos" : "Añadir a favoritos")"
+                                @onclick="ToggleFavorite">
+                            <i class="bi @(isFavorite ? "bi-heart-fill" : "bi-heart")"></i>
+                        </button>
+
+                        <button class="icon-btn" title="+ Mi Lista">
+                            <i class="bi bi-clock"></i>
+                        </button>
+
+                        <button class="icon-btn" title="Me gusta">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </button>
                     </div>
                 </div>
             </div>

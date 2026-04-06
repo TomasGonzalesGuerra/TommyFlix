@@ -90,3 +90,18 @@
     cursor: pointer;
     border-radius: 5px;
 }
+
+.modal-meta {
+    display: flex;
+    gap: 12px;
+    margin: 8px 0 12px 0;
+    flex-wrap: wrap;
+}
+
+    .modal-meta span {
+        background: rgba(255,255,255,0.08);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--ColoWhiteSoft);
+    }

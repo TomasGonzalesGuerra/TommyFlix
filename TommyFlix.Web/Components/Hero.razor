@@ -7,9 +7,16 @@
         <div class="hero-buttons">
             @if (!string.IsNullOrEmpty(detailRoute))
             {
-                <button class="btn play" @onclick='() => _Nav.NavigateTo(detailRoute)'>▶ Ver detalle</button>
+                <button class="icon-btn play-btn" title="Reproducir"
+                        @onclick='() => _Nav.NavigateTo(detailRoute.Replace("movie", "watch/movie").Replace("serie", "watch/serie"))'>
+                    <i class="bi bi-play-fill"></i>
+                </button>
+
+                <button class="icon-btn" title="Ver detalle"
+                        @onclick='() => _Nav.NavigateTo(detailRoute)'>
+                    <i class="bi bi-info-circle"></i>
+                </button>
             }
-            <slot />
         </div>
     </div>
 </div>

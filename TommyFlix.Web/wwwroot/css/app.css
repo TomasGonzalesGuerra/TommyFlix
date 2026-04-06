@@ -331,3 +331,78 @@ button:hover {
         .auth-footer a:hover {
             text-decoration: underline;
         }
+
+/* ── ICON BUTTONS ── */
+.detail-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.icon-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.08);
+    color: var(--ColoWhiteSoft);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+    .icon-btn:hover {
+        border-color: var(--ColoWhiteSoft);
+        background: rgba(255,255,255,0.18);
+        transform: scale(1.1);
+    }
+
+    /* Play destacado */
+    .icon-btn.play-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
+        background: var(--ColoGold);
+        border-color: var(--ColoGold);
+        color: black;
+    }
+
+        .icon-btn.play-btn:hover {
+            background: #e0b84a;
+            border-color: #e0b84a;
+            box-shadow: 0 0 20px rgba(201,162,74,0.5);
+            transform: scale(1.12);
+        }
+
+    /* Favorito activo */
+    .icon-btn .bi-heart-fill {
+        color: #ff6b6b;
+    }
+
+    /* Tooltip */
+    .icon-btn::after {
+        content: attr(title);
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.85);
+        color: white;
+        font-size: 0.72rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+    }
+
+    .icon-btn:hover::after {
+        opacity: 1;
+    }

@@ -92,11 +92,6 @@
     margin-bottom: 20px;
 }
 
-.detail-buttons {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
 
 .detail-section {
     padding: clamp(20px, 4vw, 50px);

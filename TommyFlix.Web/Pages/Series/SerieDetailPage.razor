@@ -1,6 +1,8 @@
 ﻿@page "/serie/{Id:int}"
 @inject NavigationManager _Nav
-@inject TmdbService TmdbService
+@inject TmdbService _TmdbService
+@inject FavoriteService _FavoriteService
+@inject AuthenticationStateProvider _AuthStateProvider
 
 @if (serie == null)
 {
@@ -36,10 +38,27 @@ else
                             <span class="genre-tag">@genre.Name</span>
                         }
                     </div>
+
                     <p class="detail-overview">@serie.Overview</p>
+
                     <div class="detail-buttons">
-                        <button class="btn play" @onclick='() => _Nav.NavigateTo($"/watch/serie/{Id}")'>▶ Reproducir</button>
-                        <button class="btn info">+ Mi Lista</button>
+                        <button class="icon-btn play-btn" title="Reproducir trailer"
+                                @onclick='() => _Nav.NavigateTo($"/watch/serie/{Id}")'>
+                            <i class="bi bi-play-fill"></i>
+                        </button>
+
+                        <button class="icon-btn" title="@(isFavorite ? "Quitar de favoritos" : "Añadir a favoritos")"
+                                @onclick="ToggleFavorite">
+                            <i class="bi @(isFavorite ? "bi-heart-fill" : "bi-heart")"></i>
+                        </button>
+
+                        <button class="icon-btn" title="+ Mi Lista">
+                            <i class="bi bi-clock"></i>
+                        </button>
+
+                        <button class="icon-btn" title="Me gusta">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -106,10 +125,18 @@ else
 @code {
     [Parameter] public int Id { get; set; }
     private TvSeries? serie;
+    private bool isFavorite = false;
+    private bool isLoggedIn = false;
 
     protected override async Task OnParametersSetAsync()
     {
         serie = null;
-        serie = await TmdbService.GetSerieDetails(Id);
+        serie = await _TmdbService.GetSerieDetails(Id);
+    }
+
+    private async Task ToggleFavorite()
+    {
+        var success = await _FavoriteService.ToggleMovieFavoriteAsync(Id, isFavorite);
+        if (success) isFavorite = !isFavorite;
     }
 }
