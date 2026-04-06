@@ -1,19 +1,26 @@
 ﻿@inherits LayoutComponentBase
-@inject AuthService AuthService
-@inject NavigationManager Nav
+@inject AuthService _AuthService
+@inject NavigationManager _Nav
+@inject IJSRuntime _JS
+@implements IAsyncDisposable
+
+@if (menuOpen)
+{
+    <div class="menu-backdrop" @onclick="CloseMenu"></div>
+}
 
 <div class="app-container">
-    <header>
+    <header class="@(isScrolled ? "scrolled" : "transparent")">
         <div class="logo">TommyFlix</div>
 
-        <nav class="menu">
-            <a href="/">Inicio</a>
-            <a href="/series">Series</a>
-            <a href="/peliculas">Películas</a>
-            <a href="/mi-lista">Mi Lista</a>
+        <nav class="menu @(menuOpen ? "open" : "")">
+            <a href="/" @onclick="CloseMenu"><i class="bi bi-house-fill"></i>Inicio</a>
+            <a href="/peliculas" @onclick="CloseMenu"><i class="bi bi-film"></i>Películas</a>
+            <a href="/series" @onclick="CloseMenu"><i class="bi bi-tv-fill"></i>Series</a>
+            <a href="/mi-lista" @onclick="CloseMenu"><i class="bi bi-clock-fill"></i>Mi Lista</a>
         </nav>
 
-        <div class="profile">
+        <div class="header-right">
             <AuthorizeView>
                 <Authorized>
                     <div class="profile-menu">
@@ -32,8 +39,12 @@
                         {
                             <div class="dropdown-backdrop" @onclick="CloseDropdown"></div>
                             <div class="profile-dropdown">
-                                <a href="/perfil" @onclick="CloseDropdown">Mi perfil</a>
-                                <button class="logout-btn" @onclick="HandleLogout">Cerrar sesión</button>
+                                <a href="/perfil" @onclick="CloseDropdown">
+                                    <i class="bi bi-person-fill"></i> Mi perfil
+                                </a>
+                                <button class="logout-btn" @onclick="HandleLogout">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                </button>
                             </div>
                         }
                     </div>
@@ -42,6 +53,13 @@
                     <a href="/login" class="btn play" style="padding: 6px 16px; font-size:0.85rem;">Iniciar sesión</a>
                 </NotAuthorized>
             </AuthorizeView>
+
+            <!-- Hamburguesa -->
+            <button class="hamburger" @onclick="ToggleMenu">
+                <span class="@(menuOpen ? "open" : "")"></span>
+                <span class="@(menuOpen ? "open" : "")"></span>
+                <span class="@(menuOpen ? "open" : "")"></span>
+            </button>
         </div>
     </header>
 
@@ -51,15 +69,43 @@
 </div>
 
 @code {
+    private bool isScrolled = false;
     private bool showDropdown = false;
+    private bool menuOpen = false;
+    private DotNetObjectReference<MainLayout>? dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await _JS.InvokeVoidAsync("scrollHelper.init", dotNetRef);
+        }
+    }
+
+    [JSInvokable]
+    public void OnScroll(bool scrolled)
+    {
+        isScrolled = scrolled;
+        StateHasChanged();
+    }
 
     private void ToggleDropdown() => showDropdown = !showDropdown;
     private void CloseDropdown() => showDropdown = false;
+    private void ToggleMenu() => menuOpen = !menuOpen;
+    private void CloseMenu() => menuOpen = false;
 
     private async Task HandleLogout()
     {
         showDropdown = false;
-        await AuthService.LogoutAsync();
-        Nav.NavigateTo("/");
+        menuOpen = false;
+        await _AuthService.LogoutAsync();
+        _Nav.NavigateTo("/");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _JS.InvokeVoidAsync("scrollHelper.dispose");
+        dotNetRef?.Dispose();
     }
 }
