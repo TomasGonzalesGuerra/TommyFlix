@@ -26,29 +26,6 @@
     font-size: clamp(0.8rem, 1.2vw, 1rem);
 }
 
-.hero-buttons {
-    margin-top: 15px;
-}
-
-.btn {
-    padding: 10px 20px;
-    border: none;
-    margin-right: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.play {
-    background: var(--ColoGold);
-    color: black;
-}
-
-.info {
-    background: rgba(255,255,255,0.2);
-    color: white;
-}
-
-/* Glow Ravenclaw */
 .hero-overlay h1 {
     color: var(--ColoGold);
     text-shadow: 0 0 20px rgba(201,162,74,0.6);
