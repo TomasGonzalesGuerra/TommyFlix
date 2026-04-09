@@ -6,15 +6,13 @@
 
 @if (movie == null)
 {
-    <div class="detail-loading">
-        <p>Cargando...</p>
-    </div>
+    <div class="detail-loading"><p>Cargando...</p></div>
 }
 else
 {
-    <div class="detail-hero" style="background-image: url('https://image.tmdb.org/t/p/original@(movie.Backdrop_Path)');">
-        <div class="detail-hero-overlay">
-            <div class="detail-hero-content">
+    <div class="detail-page" style="background-image: url('https://image.tmdb.org/t/p/original@(movie.Backdrop_Path)');">
+        <div class="detail-overlay">
+            <div class="detail-top">
                 <img class="detail-poster" src="https://image.tmdb.org/t/p/w300@(movie.Poster_Path)" alt="@movie.Title" />
                 <div class="detail-info">
                     <h1>@movie.Title</h1>
@@ -22,7 +20,6 @@ else
                     {
                         <p class="detail-tagline">"@movie.Tagline"</p>
                     }
-
                     <div class="detail-meta">
                         <span>⭐ @movie.Vote_Average.ToString("0.0")</span>
                         @if (movie.Runtime > 0)
@@ -31,64 +28,66 @@ else
                         }
                         <span>📅 @movie.Release_Date?.Substring(0, 4)</span>
                     </div>
-
                     <div class="detail-genres">
                         @foreach (var genre in movie.Genres ?? [])
                         {
                             <span class="genre-tag">@genre.Name</span>
                         }
                     </div>
-
                     <p class="detail-overview">@movie.Overview</p>
-                    
                     <div class="detail-buttons">
                         <button class="icon-btn play-btn" title="Reproducir trailer"
                                 @onclick='() => _Nav.NavigateTo($"/watch/movie/{Id}")'>
                             <i class="bi bi-play-fill"></i>
                         </button>
-
-                        <button class="icon-btn" title="@(isFavorite ? "Quitar de favoritos" : "Añadir a favoritos")"
-                                @onclick="ToggleFavorite">
-                            <i class="bi @(isFavorite ? "bi-heart-fill" : "bi-heart")"></i>
-                        </button>
-
-                        <button class="icon-btn" title="+ Mi Lista">
+                        @if (isLoggedIn)
+                        {
+                            <button class="icon-btn" title="@(isFavorite ? "Quitar de favoritos" : "Añadir a favoritos")"
+                                    @onclick="ToggleFavorite">
+                                <i class="bi @(isFavorite ? "bi-heart-fill" : "bi-heart")"></i>
+                            </button>
+                        }
+                        <button class="icon-btn" title="Ver más tarde">
                             <i class="bi bi-clock"></i>
                         </button>
-
                         <button class="icon-btn" title="Me gusta">
                             <i class="bi bi-hand-thumbs-up"></i>
                         </button>
                     </div>
                 </div>
             </div>
+
+            <!-- REPARTO -->
+            @if (movie.Credits?.Cast?.Any() == true)
+            {
+                <div class="detail-bottom">
+                    <div class="detail-section-header">
+                        <h3><i class="bi bi-people-fill"></i> Reparto</h3>
+                    </div>
+                    <div class="detail-cast-track">
+                        @foreach (var actor in movie.Credits.Cast.Take(15))
+                        {
+                            <div class="cast-card">
+                                @if (!string.IsNullOrEmpty(actor.Profile_Path))
+                                {
+                                    <img src="https://image.tmdb.org/t/p/w185@(actor.Profile_Path)" alt="@actor.Name" />
+                                }
+                                else
+                                {
+                                    <div class="cast-no-photo">👤</div>
+                                }
+                                <p class="cast-name">@actor.Name</p>
+                                <p class="cast-character">@actor.Character</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
         </div>
     </div>
-
-    @if (movie.Credits?.Cast?.Any() == true)
-    {
-        <div class="detail-section">
-            <h2 class="section-title">Reparto</h2>
-            <div class="cast-grid">
-                @foreach (var actor in movie.Credits.Cast.Take(10))
-                {
-                    <div class="cast-card">
-                        @if (!string.IsNullOrEmpty(actor.Profile_Path))
-                        {
-                            <img src="https://image.tmdb.org/t/p/w185@(actor.Profile_Path)" alt="@actor.Name" />
-                        }
-                        else
-                        {
-                            <div class="cast-no-photo">👤</div>
-                        }
-                        <p class="cast-name">@actor.Name</p>
-                        <p class="cast-character">@actor.Character</p>
-                    </div>
-                }
-            </div>
-        </div>
-    }
 }
+
 
 @code {
     [Parameter] public int Id { get; set; }
@@ -112,3 +111,5 @@ else
         if (success) isFavorite = !isFavorite;
     }
 }
+
+
