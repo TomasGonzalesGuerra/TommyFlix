@@ -8,13 +8,13 @@
 }
 
 <h2 class="section-title">🔥 Populares</h2>
-<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@popular" Type="serie" />
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@popular" />
 
 <h2 class="section-title">📡 En Emisión</h2>
-<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@onAir" Type="serie" />
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@onAir" />
 
 <h2 class="section-title">⭐ Mejor Valoradas</h2>
-<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@topRated" Type="serie" />
+<GenericCarousel TItem="TommyFlix.Web.Models.TvSeries" Items="@topRated"/>
 
 @code {
     private List<TvSeries>? popular;

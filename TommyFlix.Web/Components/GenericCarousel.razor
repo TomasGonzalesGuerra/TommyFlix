@@ -3,8 +3,10 @@
 
 
 <GenericModel TItem="TItem" Item="selectedItem" IsVisible="isModalVisible" OnClose="CloseModal"></GenericModel>
+
 <div class="carousel-wrapper">
     <button class="nav left" @onclick="Prev">❮</button>
+
     <div class="carousel-viewport">
         <div class="carousel-track" style="transform: translateX(-@(currentIndex * itemWidth)px)">
             @if (items == null)
@@ -26,12 +28,12 @@
             }
         </div>
     </div>
+
     <button class="nav right" @onclick="Next">❯</button>
 </div>
 
 @code {
     [Parameter] public List<TItem>? Items { get; set; }
-    [Parameter] public string Type { get; set; } = "movie"; // "movie" o "serie"
     private List<TItem>? items => Items;
     private int currentIndex = 0;
     private int itemWidth = 200;
@@ -53,12 +55,12 @@
     private void Next()
     {
         if (items == null) return;
-        if (currentIndex < items.Count - 5) currentIndex++;
+        if (currentIndex < items.Count - 5) currentIndex ++;
     }
 
     private void Prev()
     {
-        if (currentIndex > 0) currentIndex--;
+        if (currentIndex > 0) currentIndex --;
     }
 
     private string GetPoster(TItem item) => item switch

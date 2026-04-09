@@ -1,5 +1,5 @@
 ﻿@page "/peliculas"
-@inject TmdbService TmdbService
+@inject TmdbService _TmdbService
 
 
 @if (popular != null)
@@ -8,35 +8,35 @@
 }
 
 <h2 class="section-title">🔥 Populares</h2>
-<GenericCarousel TItem="FrontMovie" Items="@popular" Type="movie" />
+<GenericCarousel TItem="FrontMovie" Items="@popular" />
 
 <h2 class="section-title">⭐ Mejor Valoradas</h2>
-<GenericCarousel TItem="FrontMovie" Items="@topRated" Type="movie" />
+<GenericCarousel TItem="FrontMovie" Items="@topRated" />
 
 <h2 class="section-title">💥 Acción</h2>
-<GenericCarousel TItem="FrontMovie" Items="@action" Type="movie" />
+<GenericCarousel TItem="FrontMovie" Items="@action" />
 
 <h2 class="section-title">👻 Terror</h2>
-<GenericCarousel TItem="FrontMovie" Items="@horror" Type="movie" />
+<GenericCarousel TItem="FrontMovie" Items="@horror" />
 
 @code {
-    private List<FrontMovie>? popular;
-    private List<FrontMovie>? topRated;
-    private List<FrontMovie>? action;
-    private List<FrontMovie>? horror;
+    private List<FrontMovie> popular = [];
+    private List<FrontMovie> topRated = [];
+    private List<FrontMovie> action = [];
+    private List<FrontMovie> horror = [];
 
     protected override async Task OnInitializedAsync()
     {
         var results = await Task.WhenAll(
-            TmdbService.GetPopularMovies(),
-            TmdbService.GetTopRatedMovies(),
-            TmdbService.GetActionMovies(),
-            TmdbService.GetHorrorMovies()
+            _TmdbService.GetPopularMovies(),
+            _TmdbService.GetTopRatedMovies(),
+            _TmdbService.GetActionMovies(),
+            _TmdbService.GetHorrorMovies()
         );
 
-        popular = results[0].Results;
-        topRated = results[1].Results;
-        action = results[2].Results;
-        horror = results[3].Results;
+        popular = results[0]!.Results!;
+        topRated = results[1]!.Results!;
+        action = results[2]!.Results!;
+        horror = results[3]!.Results!;
     }
 }
