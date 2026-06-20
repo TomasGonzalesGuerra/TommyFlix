@@ -14,7 +14,7 @@ builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.Re
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DataContext>(dc => dc.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.Services.AddDbContext<DataContext>(dc => dc.UseSqlServer(builder.Configuration["ConnectionStrings:MonsterDBConnection"]));
 builder.Services.AddTransient<SeedDb>();
 builder.Services.AddIdentity<User, IdentityRole>(x =>
 {
@@ -31,10 +31,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins()
+        policy.WithOrigins(builder.Configuration["BlazorClientUrl"]!)
               .AllowAnyHeader()
               .AllowAnyMethod()
-          .SetIsOriginAllowed(origin => true)
               .AllowCredentials();
     });
 
