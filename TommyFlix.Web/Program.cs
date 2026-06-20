@@ -9,16 +9,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// HttpClient para tu API
-builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri("https://localhost:7280/") // ← cambiá por tu URL
-});
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["PublicApiUrl"]!) });
 
-// HttpClient nombrado para TMDB
 builder.Services.AddHttpClient("tmdb", client =>
 {
-    client.BaseAddress = new Uri("https://api.themoviedb.org/3/");
+    client.BaseAddress = new Uri(builder.Configuration["TmdbConfig:BaseUrl"]!);
     client.DefaultRequestHeaders.Authorization =
         new System.Net.Http.Headers.AuthenticationHeaderValue(
             "Bearer",
