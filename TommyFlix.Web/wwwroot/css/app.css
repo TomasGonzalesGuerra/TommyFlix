@@ -118,6 +118,14 @@ body {
     --ColoWhiteSoft: #EAEAEA;
 }
 
+h1 {
+    border: none !important;
+    outline: none !important;
+}
+    h1:focus, h1:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
 
 /* Layout */
 .app-container {
