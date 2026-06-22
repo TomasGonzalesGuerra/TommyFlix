@@ -10,10 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // HttpClient para tu API
-builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri("https://localhost:7280/") // ← cambiá por tu URL
-});
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["PublicApiUrl"]!) });
 
 builder.Services.AddHttpClient("tmdb", client =>
 {
