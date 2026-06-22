@@ -9,7 +9,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["PublicApiUrl"]!) });
+// HttpClient para tu API
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7280/") // ← cambiá por tu URL
+});
 
 builder.Services.AddHttpClient("tmdb", client =>
 {

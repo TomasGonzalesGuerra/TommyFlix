@@ -29,7 +29,7 @@ builder.Services.AddIdentity<User, IdentityRole>(x =>
 builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazorClient", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy.WithOrigins(builder.Configuration["PublicClientUrl"]!)
               .AllowAnyHeader()
@@ -75,8 +75,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
-app.UseCors("AllowBlazorClient");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
